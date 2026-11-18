@@ -65,3 +65,15 @@ main:
   # 首次建 Pages 用 api_trigger（CNB API 可直接触发，免去页面手动点击）
   'api_trigger_bootstrap_pages':
     - <<: *bootstrap-github-pages
+
+  # 旧 docs 站的 GitHub Pages 加跳转提示（不删仓，保住外部旧链接）。
+  # 用 secret-env 的 PAT 经 GitHub Contents API 写 index.html；幂等（已有跳转则跳过）。
+  'api_trigger_archive_old_sites':
+    - name: archive old GitHub Pages (add redirect notice)
+      imports:
+        - https://cnb.cool/h1s97x/secret-env/-/blob/main/env.yml
+      stages:
+        - name: add redirect to old docs pages
+          image: node:22
+          script: |
+            node --input-type=module -e "const repos=['elecredit-docs','altdatahub-docs'];const target='https://h1s97x.github.io/data-docs/';const auth='Basic '+Buffer.from(process.env.GITHUB_USERNAME+':'+process.env.GITHUB_TOKEN).toString('base64');const h={Authorization:auth,'User-Agent':'cnb-docs-archive','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};for(const repo of repos){const api='https://api.github.com/repos/h1s97x/'+repo+'/contents/index.html';const cur=await fetch(api,{headers:h});let sha='';let old='';if(cur.ok){const j=await cur.json();sha=j.sha;old=Buffer.from(j.content,'base64').toString('utf8')}if(old.includes('h1s97x.github.io/data-docs')){console.log(repo+': redirect already present');continue}const notice='<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"utf-8\"><meta http-equiv=\"refresh\" content=\"0;url='+target+'\"><title>已归档</title></head><body><p>本站点已归档，文档已迁至 <a href=\"'+target+'\">Data Docs</a>。</p></body></html>';const body={message:'chore: 归档旧文档站，跳转到统一 data-docs',content:Buffer.from(notice).toString('base64'),branch:'main'};if(sha)body.sha=sha;const put=await fetch(api,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},h),body:JSON.stringify(body)});console.log(repo+': PUT /contents/index.html ->',put.status);if(!put.ok)console.error((await put.text()).slice(0,300))}"
