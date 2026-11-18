@@ -1,0 +1,68 @@
+# data-docs（GitHub 发布源）的 Pages workflow
+#
+# 触发：CNB data-docs 推送后由 git-sync 落到本仓 main → 重建发布；也可手动触发。
+# 发布前闸：校验三个项目的脱敏快照 manifest/sha256/敏感串（pnpm check）。
+# 站点事实源是 CNB data-docs，本仓只做发布，不直接编辑内容。
+
+name: Docs site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 版本以 package.json 的 packageManager（pnpm@9.0.0）为唯一来源
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 校验三项目脱敏快照
+        run: pnpm check
+
+      - name: 构建
+        env:
+          DOCS_REPO_URL: https://github.com/${{ github.repository }}
+          DOCS_EDIT_LINK: https://github.com/${{ github.repository }}/blob/main
+        run: |
+          set -e
+          # GitHub Pages 项目站点部署在 /<repo>/ 子路径，base 必须匹配
+          pnpm build --base=/${{ github.event.repository.name }}/
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .vitepress/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
