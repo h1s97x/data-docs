@@ -1,0 +1,168 @@
+openapi: 3.1.0
+info:
+  title: elecredit-service
+  version: 0.1.0
+  description: >-
+    Elecredit 能力级服务：主仓只按能力名请求，服务商端点/产品码/签名/凭据全部留在服务侧。
+    openapi/openapi.yaml 是服务商原生 10 端点契约；本文件是对外能力级契约，二者不要混用。
+    接入方快速开始见 docs/INTEGRATION.md。
+  contact:
+    name: elecredit-service 维护方
+    url: https://cnb.cool/h1s97x/whccb/elecredit
+servers:
+  - url: http://127.0.0.1:8800
+    description: 本机调试（python -m service）
+  - url: http://{host}:{port}
+    description: 已部署实例；host / port 由运维提供，在 Apifox 环境变量里填写
+    variables:
+      host:
+        default: 127.0.0.1
+        description: 服务地址
+      port:
+        default: "8081"
+        description: 服务端口
+tags:
+  - name: 健康检查
+    description: 不触达上游、不需要 Token
+  - name: 征信能力
+    description: 按能力名查询企业数据，统一 Bearer Token 鉴权
+security:
+  - bearerAuth: []
+paths:
+  /v1/ping:
+    get:
+      tags: [健康检查]
+      operationId: ping
+      summary: 健康检查（不触达上游）
+      description: >-
+        返回服务名与能力清单。部分部署版本会带 credentials_configured；
+        注意本端点不校验上游数据商凭据，返回 200 不代表查询能力可用。
+      security: []
+      responses:
+        '200':
+          description: 服务存活
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  service: { type: string }
+                  capabilities: { type: array, items: { type: string } }
+                  credentials_configured: { type: boolean }
+  /healthz:
+    get:
+      tags: [健康检查]
+      operationId: healthz
+      summary: 容器健康检查
+      description: 供容器 healthcheck 调用，不触达上游、不需要 Token。
+      security: []
+      responses:
+        '200':
+          description: 服务存活
+  /v1/query/{capability}:
+    post:
+      tags: [征信能力]
+      operationId: queryCapability
+      summary: 单个征信能力查询
+      description: >-
+        capability 取 basic / scale / risk / admin_punishment / tax / shareholding / full。
+        统一请求体为 {"company_name": "..."}；tax 可带 tax_type，
+        shareholding 可带 level / ratio。上游失败仍返回 HTTP 200，
+        必须按响应体的 success 字段判定，不能只看 HTTP 状态码。
+      parameters:
+        - name: capability
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [basic, scale, risk, admin_punishment, tax, shareholding, full]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryReq'
+      responses:
+        '200':
+          description: 业务结果（注意：上游失败也返回 200，用 success 字段判定）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResp'
+        '400':
+          description: 未知能力或请求体非法
+        '401':
+          description: Bearer Token 缺失或错误
+        '429':
+          description: 触发按能力限流
+  /v1/normalize:
+    post:
+      tags: [征信能力]
+      operationId: normalizeCompanyName
+      summary: 企业名称标准化
+      description: >-
+        把简称/别称补全为工商登记全称。上游不可用时会返回降级信封，
+        调用方必须把结果标注为未核实，而不是当作确定的全称使用。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryReq'
+      responses:
+        '200':
+          description: 标准化结果
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    $ref: '#/components/schemas/NormalizeData'
+        '401':
+          description: Bearer Token 缺失或错误
+        '429':
+          description: 触发按能力限流
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    QueryReq:
+      type: object
+      required: [company_name]
+      properties:
+        company_name: { type: string, description: 企业名称 }
+        tax_type: { type: string, description: 仅 tax 能力可用 }
+        level: { type: string, description: 仅 shareholding 能力可用 }
+        ratio: { type: string, description: 仅 shareholding 能力可用 }
+    QueryResp:
+      type: object
+      required: [success]
+      properties:
+        success: { type: boolean }
+        data: { type: object, additionalProperties: true }
+        standard_name: { type: string }
+        product_name: { type: string }
+        error: { type: string }
+        code: { type: string }
+        category: { type: string }
+        retryable: { type: boolean }
+        hint: { type: string }
+        degrade_reason: { type: string }
+        partial: { type: boolean, description: 仅 full }
+        modules: { type: object, additionalProperties: true, description: 仅 full }
+        errors: { type: object, additionalProperties: true, description: 仅 full }
+        warning: { type: string, description: 仅 full }
+    NormalizeData:
+      type: object
+      properties:
+        normalized: { type: string }
+        is_likely_full: { type: boolean }
+        original: { type: string }
+        verified: { type: boolean }
+        degrade_reason: { type: string }
+        note: { type: string }

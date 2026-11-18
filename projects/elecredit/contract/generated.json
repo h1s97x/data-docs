@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "generatedBy": "tools/gen_code.py",
+  "generatorSha256": "9b94d2a4ac677d8f726873b4cd180f4cd09296a80f5e9bd87f8f3006aa510408",
+  "contract": {
+    "version": 1,
+    "endpoints": 10,
+    "errors": 19,
+    "d11Types": 12
+  },
+  "publicApi": {
+    "endpoints": [
+      "actual_controller",
+      "admin_punishment",
+      "bidding",
+      "deep",
+      "fuzzy",
+      "graph",
+      "judicial",
+      "scale",
+      "tax",
+      "xgbzxr"
+    ],
+    "errorCodes": [
+      "400",
+      "999",
+      "HTTP_429",
+      "HTTP_4XX",
+      "HTTP_5XX",
+      "INTERNAL",
+      "LOCAL_USAGE",
+      "NETWORK",
+      "SYS001",
+      "SYS002",
+      "SYS003",
+      "SYS004",
+      "SYS005",
+      "SYS006",
+      "SYS007",
+      "SYS008",
+      "SYS009",
+      "SYS044",
+      "UNKNOWN_CODE"
+    ],
+    "d11Types": [
+      "bgt",
+      "cpws",
+      "fygg",
+      "ktgg",
+      "lian",
+      "pccz",
+      "pmgg",
+      "sdgg",
+      "shixin",
+      "xzgxf",
+      "zbaj",
+      "zxgg"
+    ]
+  },
+  "files": [
+    {
+      "path": "sdks/c/include/elecredit_generated.h",
+      "sha256": "f52617266053720e2e95363d3bed6e2d1dbf522034e43eadc01e48e5aa7e8354"
+    },
+    {
+      "path": "sdks/c/src/elecredit_generated.c",
+      "sha256": "2734781c8a9fc44993063a8c8c1c12b1fbc9a4503a646eca81a9f5f7abdcda26"
+    },
+    {
+      "path": "sdks/csharp/src/Elecredit/Generated.cs",
+      "sha256": "9e853d04bfd6978adc1c45f30149ef314154730e532a8187af7859b969682a72"
+    },
+    {
+      "path": "sdks/go/gen/generated.go",
+      "sha256": "f16dec5b6f36c6019d713c1edc2474d2fba21699f0c04f75941b106d5d6d2850"
+    },
+    {
+      "path": "sdks/java/src/main/java/com/elecredit/Generated.java",
+      "sha256": "7e52e74ca0fb7971d95bb3d7b8acb68223dfc95e91d6af6215f80219ef5cc319"
+    },
+    {
+      "path": "sdks/python/elecredit/endpoints_generated.py",
+      "sha256": "108e913985831d8890ec5e788eb88a161a166e639585bcb17817ce031b64b4da"
+    },
+    {
+      "path": "sdks/python/elecredit/errors_generated.py",
+      "sha256": "82cd7718273a79dda830a8bc96a5f50837cef4ddf24690b0b7bffc1499d2029d"
+    },
+    {
+      "path": "sdks/python/elecredit/judicial_generated.py",
+      "sha256": "4890012e1c76605a7dc006a7cbb0b23441949310ba8e0a8a219bf13fc3c56893"
+    },
+    {
+      "path": "sdks/rust/src/generated.rs",
+      "sha256": "e0078cfc7016252a0270af7b269b472802b070ce8ba90a6802c24c205c2ea7fa"
+    },
+    {
+      "path": "sdks/typescript/src/contracts/generated.ts",
+      "sha256": "facc01e0310417355e769275ca643cfab0e0234e55f58b4efba13972b62fc289"
+    }
+  ]
+}

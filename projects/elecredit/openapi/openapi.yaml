@@ -1,0 +1,932 @@
+# Elecredit OpenAPI 契约 —— 仓库唯一真源（source of truth）。
+# Apifox / Redoc / Scalar / Prism / Spectral 均从此文件读取。
+# 方向：文件是真相，工具（含 Apifox）是它的视图，而非反过来。
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Elecredit — 企业风控数据 API",
+    "description": "企业风控统一入口。覆盖 10 个 REST 端点：工商模糊/深度查询、大中小微划型、税务信用、行政处罚、司法（12 种 type）、限消人员、企业股权图谱、招投标、实控人。\n\n**签名算法**：`MD5(requestSn + timestamp_ms + bodyCompactJson + appKey).hex()`\n\n**请求约定**：全部 POST + JSON body，签名放 HTTP Header（非 body），body 用紧凑 JSON（中文不转义）。",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Elecredit",
+      "url": "https://api.elecredit.com/admin"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.elecredit.com",
+      "description": "生产网关"
+    }
+  ],
+  "tags": [
+    { "name": "企业工商", "description": "工商模糊查询、深度查询、大中小微划型" },
+    { "name": "风险司法", "description": "司法查询、限消人员" },
+    { "name": "税务行政处罚", "description": "税务信用、行政处罚" },
+    { "name": "企业图谱", "description": "股权图谱、招投标、实控人" }
+  ],
+  "security": [
+    { "ElecreditAppId": [], "ElecreditAppKey": [] }
+  ],
+  "paths": {
+
+    "/mohu/wh": {
+      "post": {
+        "tags": ["企业工商"],
+        "summary": "A07 企业工商模糊查询",
+        "description": "按企业名称或部分关键字模糊搜索，返回匹配企业列表。支持分页。",
+        "operationId": "fuzzyEnterprise",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FuzzyRequest" },
+              "example": { "entName": "贵州茅台", "type": "2", "pageNo": "1", "range": "10" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseFuzzy" },
+                "example": {
+                  "code": "000",
+                  "msg": "查询成功",
+                  "orderNo": "a14eb808e0c245f4b15c1123b0e2265b",
+                  "resultCode": "000",
+                  "resultData": [
+                    {
+                      "creditCode": "91520300MA6DJXXXX",
+                      "regNo": "520300000XXXXXX",
+                      "entName": "贵州茅台酒股份有限公司",
+                      "entType": "股份有限公司",
+                      "openStatus": "存续",
+                      "regCap": "125619.78万元",
+                      "estiblishTime": "2001-08-20",
+                      "regCity": "遵义市"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/saic/enterprise/deep/wh": {
+      "post": {
+        "tags": ["企业工商"],
+        "summary": "A03 企业工商深度查询",
+        "description": "企业工商详情 + 10+ 年报子列表 + 股权出质 + 司法协助 + 严重违法。四个标识字段至少填一个，可混用。",
+        "operationId": "deepEnterprise",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DeepRequest" },
+              "example": { "entName": "贵州茅台酒股份有限公司" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功（大结果）",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseDeep" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/enterprise/companyLevel/wh": {
+      "post": {
+        "tags": ["企业工商"],
+        "summary": "A04 企业大中小微划型",
+        "description": "返回企业划型结果（大型/中型/小型/微型）。基于从业人员数、营业收入、资产总额三个指标综合判定。",
+        "operationId": "scaleEnterprise",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ScaleRequest" },
+              "example": { "entInfo": "贵州茅台" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseScale" },
+                "example": {
+                  "code": "000",
+                  "msg": "查询成功",
+                  "orderNo": "a14eb808e0c245f4b15c1123b0e2265b",
+                  "resultCode": "000",
+                  "resultData": {
+                    "entName": "贵州茅台酒股份有限公司",
+                    "scale": "大型",
+                    "scaleDetail": {
+                      "employeeCount": "4000+",
+                      "revenue": "1500亿",
+                      "totalAssets": "2500亿"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/enterprise/taxInfo": {
+      "post": {
+        "tags": ["税务行政处罚"],
+        "summary": "B06 企业税务信用查询",
+        "description": "企业税务 4 类信息：纳税信用等级、欠税公告、涉税处罚、非正常户公告。可按 type 过滤。",
+        "operationId": "taxInfo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TaxRequest" },
+              "example": { "entityName": "贵州茅台", "type": "satpartyXin" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseTax" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/enterprise/adminPunishment": {
+      "post": {
+        "tags": ["税务行政处罚"],
+        "summary": "D07 行政处罚",
+        "description": "多渠道行政处罚：工商、证监会、食药监、银监会、海关、税务、安监等。支持按类型和日期范围过滤。",
+        "operationId": "adminPunishment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AdminPunishmentRequest" },
+              "example": {
+                "entInfo": "贵州茅台",
+                "type": "buss",
+                "startDate": "2023-01-01",
+                "endDate": "2024-12-31"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseAdminPunishment" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/risk/sifaInfo/wh": {
+      "post": {
+        "tags": ["风险司法"],
+        "summary": "D11 企业司法模糊查询",
+        "description": "按企业名称聚合返回该企业的司法类数据（12 种 type），并给出各类型的分页元数据 detailListMeta。⚠️ 字段名是 entityName（不是 entName/entInfo），type 单值不支持多选，range 上限 20。",
+        "operationId": "judicialFuzzy",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/JudicialRequest" },
+              "example": { "entityName": "恒大地产集团有限公司", "type": "ktgg", "pageNo": "1", "range": "20" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseJudicial" },
+                "example": {
+                  "code": "000",
+                  "msg": "查询成功",
+                  "orderNo": "a14eb808e0c245f4b15c1123b0e2265b",
+                  "resultCode": "000",
+                  "resultData": {
+                    "P0030089Status": "1",
+                    "P0030089Data": {
+                      "detailListMeta": {
+                        "totalCount": "16723",
+                        "totalPage": "837",
+                        "pageNo": "1",
+                        "range": "20",
+                        "actualNo": 20,
+                        "ktggCount": "16723",
+                        "ktggPageNum": "837",
+                        "shixinCount": "598",
+                        "zxggCount": "9731",
+                        "cpwsCount": "2776",
+                        "fyggCount": "2420",
+                        "bgtCount": "3607"
+                      },
+                      "detailList": [{ "annoType": "", "title": "开庭公告标题", "court": "某法院" }]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/litigation/xgbzxrPeople/wh": {
+      "post": {
+        "tags": ["风险司法"],
+        "summary": "D14 限制高消费人员查询",
+        "description": "按姓名 + 身份证号查询某人是否为限制高消费人员（限消令）。身份证号需完整 18 位，响应中脱敏展示。",
+        "operationId": "xgbzxr",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/XgbzxrRequest" },
+              "example": { "persName": "许家印", "idNo": "110101195804261234" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseXgbzxr" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/saic/equityPenetration": {
+      "post": {
+        "tags": ["企业图谱"],
+        "summary": "F09 企业股权图谱",
+        "description": "企业全貌图谱：向下穿透对外投资 + 向上穿透股东链，递归展开。默认 3 层、5% 持股阈值。注意端点默认 60 秒超时。",
+        "operationId": "equityGraph",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GraphRequest" },
+              "example": { "entInfo": "贵州茅台", "level": "3", "down": true, "up": true }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseGraph" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/enterprise/biddingYPageWh": {
+      "post": {
+        "tags": ["企业图谱"],
+        "summary": "B04 招投标信息",
+        "description": "返回企业的招标 / 中标记录列表。⚠️ 参数名必须是 entInfo（传 entName 会返回 400）。",
+        "operationId": "bidding",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BiddingRequest" },
+              "example": { "entInfo": "贵州茅台", "pageNo": "1", "range": "10" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseBidding" },
+                "example": {
+                  "ok": true,
+                  "bizCode": "001",
+                  "data": {
+                    "P0010034Status": "1",
+                    "P0010034Data": { "resultList": [] }
+                  },
+                  "orderNo": "a14eb808e0c245f4b15c1123b0e2265b"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/saic/SaicinvWh": {
+      "post": {
+        "tags": ["企业图谱"],
+        "summary": "P0020019 实控人（法人 / 股东穿透）",
+        "description": "返回企业实际控制人及其穿透链路。⚠️ 路径大小写敏感（小写 w 的 SaicinvWh），参数名必须是 entInfo（传 entName 会返回 400）。",
+        "operationId": "actualController",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ActualControllerRequest" },
+              "example": { "entInfo": "国家电网有限公司" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseActualController" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "components": {
+
+    "securitySchemes": {
+      "ElecreditAppId": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "app-id",
+        "description": "App ID。从 https://api.elecredit.com/admin 获取，与 App Key 配对使用。"
+      },
+      "ElecreditAppKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "app-key",
+        "description": "App Key（密钥，用于计算签名，**不会作为 Header 发送**）。\n\n签名算法：\n```\nsn       = uuid.hex()                    # 32 位随机\nts       = str(int(time.time() * 1000)) # 毫秒时间戳\nbody     = json.dumps(obj, ensure_ascii=False, separators=(',', ':'))\nsignStr  = sn + ts + body + appKey\nsignature= MD5(signStr).hex()           # 小写 32 位\n```\n\n最终发送 5 个 Header：\n- `app-id`:        <App ID>\n- `timestamp`:     <毫秒时间戳>\n- `request-sn`:    <32 位 UUID>\n- `signature`:     <MD5 小写 hex>\n- `sign-type`:     MD5"
+      }
+    },
+
+    "headers": {
+      "AppId": {
+        "description": "App ID（从 https://api.elecredit.com/admin 获取）",
+        "schema": { "type": "string" },
+        "required": true
+      },
+      "Timestamp": {
+        "description": "当前毫秒时间戳（UTC+8）",
+        "schema": { "type": "string" },
+        "required": true
+      },
+      "RequestSn": {
+        "description": "32 位随机 UUID（用于签名）",
+        "schema": { "type": "string" },
+        "required": true
+      },
+      "Signature": {
+        "description": "MD5(sn + timestamp + body + appKey).hex() 小写 32 位",
+        "schema": { "type": "string" },
+        "required": true
+      },
+      "SignType": {
+        "description": "签名算法类型",
+        "schema": { "type": "string", "enum": ["MD5", "SHA256"], "default": "MD5" },
+        "required": true
+      }
+    },
+
+    "schemas": {
+
+      "ApiEnvelope": {
+        "type": "object",
+        "description": "通用响应信封",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "业务码：`000`/空=成功, `001`=查询成功无结果, SYSxxx=系统错误"
+          },
+          "msg": { "type": "string", "description": "响应消息" },
+          "orderNo": { "type": "string", "description": "请求流水号（可用于对账）" },
+          "resultCode": { "type": "string", "description": "结果码" },
+          "resultData": { "description": "业务数据（类型因端点而异）" }
+        }
+      },
+
+      "ErrorResponse": {
+        "type": "object",
+        "description": "错误响应",
+        "properties": {
+          "code": { "type": "string", "enum": ["SYS001", "SYS002", "SYS003", "SYS004", "SYS005", "SYS006", "SYS008", "SYS044"] },
+          "msg": { "type": "string" },
+          "orderNo": { "type": "string" }
+        },
+        "allOf": [
+          {
+            "description": "错误码说明：\n- SYS001: 签名校验失败（检查 appKey、中文不转义、body 紧凑 JSON）\n- SYS002: 请求过期（同步本机时钟）\n- SYS003: 应用 ID 不存在\n- SYS004: 签名算法不支持\n- SYS005: 余额不足（签名已通过，提示充值）\n- SYS006: IP 受限\n- SYS008: 频率限制\n- SYS044: 资源不存在（检查路径大小写）"
+          }
+        ]
+      },
+
+      "_Pagination": {
+        "type": "object",
+        "properties": {
+          "pageNo": { "type": "string", "description": "页码，从 1 开始" },
+          "range": { "type": "string", "description": "每页数量（司法端点上限 20）" }
+        }
+      },
+
+      "FuzzyRequest": {
+        "type": "object",
+        "required": ["entName"],
+        "properties": {
+          "entName": { "type": "string", "description": "企业名称关键字，建议 2 个字符以上" },
+          "type": { "type": "string", "description": "0=工商主体, 1=非工商主体, 2=全部（默认）", "enum": ["0", "1", "2"] },
+          "regionId": { "type": "string", "description": "行政区划代码，逗号分隔多个" },
+          "pageNo": { "type": "string", "description": "页码，从 1 开始" },
+          "range": { "type": "string", "description": "每页数量" }
+        }
+      },
+
+      "FuzzyEnterprise": {
+        "type": "object",
+        "properties": {
+          "creditCode": { "type": "string", "description": "统一社会信用代码" },
+          "regNo": { "type": "string", "description": "工商注册号" },
+          "entName": { "type": "string", "description": "企业全称" },
+          "entType": { "type": "string", "description": "企业类型" },
+          "openStatus": { "type": "string", "description": "经营状态" },
+          "regCap": { "type": "string", "description": "注册资本" },
+          "estiblishTime": { "type": "string", "description": "成立时间" },
+          "regCity": { "type": "string", "description": "所在行政区" }
+        }
+      },
+
+      "ApiResponseFuzzy": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ApiEnvelope" },
+          {
+            "type": "object",
+            "properties": {
+              "resultData": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/FuzzyEnterprise" }
+              }
+            }
+          }
+        ]
+      },
+
+      "DeepRequest": {
+        "type": "object",
+        "description": "四个标识字段至少填一个，可混用",
+        "properties": {
+          "entName": { "type": "string", "description": "企业全称" },
+          "creditCode": { "type": "string", "description": "统一社会信用代码（18 位）" },
+          "regNo": { "type": "string", "description": "工商注册号（15 位）" },
+          "orgCode": { "type": "string", "description": "组织机构代码（9 位）" }
+        }
+      },
+
+      "DeepEnterpriseDetail": {
+        "type": "object",
+        "properties": {
+          "creditCode": { "type": "string", "description": "统一社会信用代码" },
+          "entName": { "type": "string", "description": "企业全称" },
+          "openStatus": { "type": "string", "description": "经营状态" },
+          "entType": { "type": "string", "description": "企业类型" },
+          "regCap": { "type": "string", "description": "注册资本" },
+          "estiblishTime": { "type": "string", "description": "成立时间" },
+          "regAddress": { "type": "string", "description": "注册地址" },
+          "annualReportList": { "type": "array", "description": "年报信息列表", "items": { "type": "object" } },
+          "equityPledgeList": { "type": "array", "description": "股权出质登记", "items": { "type": "object" } },
+          "judicialAssistanceList": { "type": "array", "description": "司法协助信息", "items": { "type": "object" } },
+          "seriousIllegalList": { "type": "array", "description": "严重违法失信企业", "items": { "type": "object" } }
+        }
+      },
+
+      "ApiResponseDeep": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ApiEnvelope" },
+          {
+            "type": "object",
+            "properties": {
+              "resultData": { "$ref": "#/components/schemas/DeepEnterpriseDetail" }
+            }
+          }
+        ]
+      },
+
+      "ScaleRequest": {
+        "type": "object",
+        "required": ["entInfo"],
+        "properties": {
+          "entInfo": { "type": "string", "description": "信用代码、注册号或企业名称 任一" }
+        }
+      },
+
+      "ScaleDetail": {
+        "type": "object",
+        "description": "判定依据",
+        "properties": {
+          "employeeCount": { "type": "string", "description": "从业人员数" },
+          "revenue": { "type": "string", "description": "营业收入" },
+          "totalAssets": { "type": "string", "description": "资产总额" }
+        }
+      },
+
+      "ScaleResult": {
+        "type": "object",
+        "properties": {
+          "entName": { "type": "string", "description": "匹配到的企业名称" },
+          "scale": { "type": "string", "description": "划型结果", "enum": ["大型", "中型", "小型", "微型"] },
+          "scaleDetail": { "$ref": "#/components/schemas/ScaleDetail" }
+        }
+      },
+
+      "ApiResponseScale": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ApiEnvelope" },
+          {
+            "type": "object",
+            "properties": {
+              "resultData": { "$ref": "#/components/schemas/ScaleResult" }
+            }
+          }
+        ]
+      },
+
+      "TaxRequest": {
+        "type": "object",
+        "required": ["entityName"],
+        "properties": {
+          "entityName": { "type": "string", "description": "企业名称" },
+          "type": {
+            "type": "string",
+            "description": "税务类型，省略时返回全部",
+            "enum": ["satpartyXin", "satpartyQs", "satpartyChufa", "satpartyFzc"]
+          },
+          "pageNo": { "type": "string", "description": "页码，从 1 开始" },
+          "range": { "type": "string", "description": "每页数量" }
+        }
+      },
+
+      "TaxResult": {
+        "type": "object",
+        "description": "按 type 不同结构不同：\n- satpartyXin: 纳税信用等级列表（年度、等级、评价机关）\n- satpartyQs: 欠税公告列表（欠税税种、金额、所属期）\n- satpartyChufa: 涉税处罚列表（处罚决定书、事由、结果）\n- satpartyFzc: 非正常户列表（认定日期、认定机关）",
+        "properties": {
+          "creditYear": { "type": "string", "description": "年度（satpartyXin）" },
+          "creditLevel": { "type": "string", "description": "信用等级 A/B/C/D（satpartyXin）" },
+          "taxType": { "type": "string", "description": "欠税税种（satpartyQs）" },
+          "taxAmount": { "type": "string", "description": "欠税金额（satpartyQs）" },
+          "punishNo": { "type": "string", "description": "处罚决定书号（satpartyChufa）" },
+          "punishReason": { "type": "string", "description": "处罚事由（satpartyChufa）" },
+          "confirmDate": { "type": "string", "description": "认定日期（satpartyFzc）" },
+          "authority": { "type": "string", "description": "认定/评价机关" }
+        }
+      },
+
+      "ApiResponseTax": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ApiEnvelope" },
+          {
+            "type": "object",
+            "properties": {
+              "resultData": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/TaxResult" }
+              }
+            }
+          }
+        ]
+      },
+
+      "AdminPunishmentRequest": {
+        "type": "object",
+        "required": ["entInfo"],
+        "properties": {
+          "entInfo": { "type": "string", "description": "信用代码/注册号/名称 任一" },
+          "type": {
+            "type": "string",
+            "description": "渠道类型",
+            "enum": ["buss", "zjh", "syj", "csrc", "hg", "tax", "safety"]
+          },
+          "pageNo": { "type": "string", "description": "页码，从 1 开始" },
+          "range": { "type": "string", "description": "每页数量" },
+          "startDate": { "type": "string", "description": "处罚日期起始 YYYY-MM-DD" },
+          "endDate": { "type": "string", "description": "处罚日期截止 YYYY-MM-DD" }
+        }
+      },
+
+      "AdminPunishmentResult": {
+        "type": "object",
+        "properties": {
+          "punishNo": { "type": "string", "description": "处罚决定书文号" },
+          "punishType": { "type": "string", "description": "处罚类型" },
+          "punishDate": { "type": "string", "description": "处罚日期" },
+          "reason": { "type": "string", "description": "违法事由" },
+          "result": { "type": "string", "description": "处罚结果" },
+          "authority": { "type": "string", "description": "处罚机关" },
+          "type": { "type": "string", "description": "渠道类型（buss/zjh/syj/csrc/hg 等）" }
+        }
+      },
+
+      "ApiResponseAdminPunishment": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ApiEnvelope" },
+          {
+            "type": "object",
+            "properties": {
+              "resultData": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/AdminPunishmentResult" }
+              }
+            }
+          }
+        ]
+      },
+
+      "JudicialRequest": {
+        "type": "object",
+        "required": ["entityName"],
+        "properties": {
+          "entityName": { "type": "string", "description": "企业名称（⚠️ 字段名是 entityName，不是 entName/entInfo）" },
+          "type": {
+            "type": "string",
+            "description": "单值类型过滤，12 种合法值",
+            "enum": ["shixin", "zxgg", "cpws", "fygg", "ktgg", "xzgxf", "bgt", "pccz", "sdgg", "zbaj", "lian", "pmgg"]
+          },
+          "pageNo": { "type": "string", "description": "页码，从 1 开始" },
+          "range": { "type": "string", "description": "每页数量，上限 20（默认 10）" }
+        }
+      },
+
+      "JudicialTypeMeta": {
+        "type": "object",
+        "description": "各类型分页元数据（detailListMeta 结构）",
+        "properties": {
+          "totalCount": { "type": "string", "description": "总条数（字符串）" },
+          "totalPage": { "type": "string", "description": "总页数" },
+          "pageNo": { "type": "string", "description": "当前页码" },
+          "range": { "type": "string", "description": "每页数量" },
+          "actualNo": { "type": "integer", "description": "当前页实际条数（数字）" },
+          "shixinCount": { "type": "string", "description": "失信条数" },
+          "shixinPageNum": { "type": "string", "description": "失信页数" },
+          "zxggCount": { "type": "string", "description": "执行公告条数" },
+          "zxggPageNum": { "type": "string" },
+          "cpwsCount": { "type": "string", "description": "裁判文书条数" },
+          "cpwsPageNum": { "type": "string" },
+          "fyggCount": { "type": "string", "description": "法院公告条数" },
+          "fyggPageNum": { "type": "string" },
+          "ktggCount": { "type": "string", "description": "开庭公告条数" },
+          "ktggPageNum": { "type": "string" },
+          "xzgxfCount": { "type": "string", "description": "限制高消费条数" },
+          "xzgxfPageNum": { "type": "string" },
+          "bgtCount": { "type": "string", "description": "公告（其他）条数" },
+          "bgtPageNum": { "type": "string" },
+          "pcczCount": { "type": "string", "description": "破产重整条数" },
+          "pcczPageNum": { "type": "string" },
+          "sdggCount": { "type": "string", "description": "送达公告条数" },
+          "sdggPageNum": { "type": "string" },
+          "zbajCount": { "type": "string", "description": "中标案件条数" },
+          "zbajPageNum": { "type": "string" },
+          "lianCount": { "type": "string", "description": "关联条数" },
+          "lianPageNum": { "type": "string" },
+          "pmggCount": { "type": "string", "description": "拍卖公告条数" },
+          "pmggPageNum": { "type": "string" }
+        }
+      },
+
+      "JudicialResultData": {
+        "type": "object",
+        "properties": {
+          "P0030089Status": { "type": "string", "description": "计费码状态" },
+          "P0030089Data": {
+            "type": "object",
+            "properties": {
+              "detailListMeta": { "$ref": "#/components/schemas/JudicialTypeMeta" },
+              "detailList": {
+                "type": "array",
+                "description": "单条记录字段随类型不同；annoType 实测为空字符串，需按 type 分别查询",
+                "items": { "type": "object" }
+              }
+            }
+          }
+        }
+      },
+
+      "ApiResponseJudicial": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ApiEnvelope" },
+          {
+            "type": "object",
+            "properties": {
+              "resultData": { "$ref": "#/components/schemas/JudicialResultData" }
+            }
+          }
+        ]
+      },
+
+      "XgbzxrRequest": {
+        "type": "object",
+        "required": ["persName", "idNo"],
+        "properties": {
+          "persName": { "type": "string", "description": "姓名" },
+          "idNo": { "type": "string", "description": "身份证号（18 位，精确匹配）" }
+        }
+      },
+
+      "XgbzxrResult": {
+        "type": "object",
+        "properties": {
+          "persName": { "type": "string", "description": "被限消人姓名" },
+          "idNo": { "type": "string", "description": "身份证号（响应脱敏展示，中间 8 位隐藏）" },
+          "execCourtName": { "type": "string", "description": "执行法院" },
+          "execCaseNum": { "type": "string", "description": "执行案号" },
+          "createTime": { "type": "string", "description": "限消令发布时间" },
+          "publishStatus": { "type": "string", "description": "发布状态" },
+          "businessEntity": { "type": "string", "description": "关联企业（如法定代表人限消）" }
+        }
+      },
+
+      "ApiResponseXgbzxr": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ApiEnvelope" },
+          {
+            "type": "object",
+            "properties": {
+              "resultData": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/XgbzxrResult" }
+              }
+            }
+          }
+        ]
+      },
+
+      "GraphRequest": {
+        "type": "object",
+        "required": ["entInfo"],
+        "properties": {
+          "entInfo": { "type": "string", "description": "信用代码/注册号/名称 任一" },
+          "level": { "type": "string", "description": "递归层数，默认 3" },
+          "down": { "type": "boolean", "description": "true=向下穿透对外投资" },
+          "up": { "type": "boolean", "description": "true=向上穿透股东链" }
+        },
+        "description": "省略 down/up 时默认两个方向都穿透。默认 3 层、5% 持股阈值。端点 60 秒超时。"
+      },
+
+      "GraphNode": {
+        "type": "object",
+        "description": "递归树节点",
+        "properties": {
+          "entName": { "type": "string", "description": "企业名称" },
+          "creditCode": { "type": "string", "description": "统一社会信用代码" },
+          "equityRatio": { "type": "string", "description": "持股比例" },
+          "downList": {
+            "type": "array",
+            "description": "向下穿透的对外投资子树",
+            "items": { "$ref": "#/components/schemas/GraphNode" }
+          },
+          "upList": {
+            "type": "array",
+            "description": "向上穿透的股东链子树",
+            "items": { "$ref": "#/components/schemas/GraphNode" }
+          }
+        }
+      },
+
+      "ApiResponseGraph": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ApiEnvelope" },
+          {
+            "type": "object",
+            "properties": {
+              "resultData": { "$ref": "#/components/schemas/GraphNode" }
+            }
+          }
+        ]
+      },
+
+      "BiddingRequest": {
+        "type": "object",
+        "required": ["entInfo"],
+        "properties": {
+          "entInfo": { "type": "string", "description": "企业名称 / 统一社会信用代码（⚠️ 必须是 entInfo，不是 entName）" },
+          "pageNo": { "type": "string", "description": "页码，从 1 开始" },
+          "range": { "type": "string", "description": "每页数量" },
+          "position": { "type": "string", "description": "地区 / 位置过滤" },
+          "startDate": { "type": "string", "description": "日期区间 YYYY-MM-DD" },
+          "endDate": { "type": "string", "description": "日期区间 YYYY-MM-DD" }
+        }
+      },
+
+      "BiddingResult": {
+        "type": "object",
+        "properties": {
+          "ok": { "type": "boolean" },
+          "bizCode": { "type": "string", "description": "000=有结果, 001=查询成功无结果" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "P0010034Status": { "type": "string" },
+              "P0010034Data": {
+                "type": "object",
+                "properties": {
+                  "resultList": {
+                    "type": "array",
+                    "items": { "type": "object" }
+                  }
+                }
+              }
+            }
+          },
+          "orderNo": { "type": "string" }
+        },
+        "description": "注意：招投标端点响应结构与其他端点不同，没有外层 code/msg。"
+      },
+
+      "ApiResponseBidding": {
+        "$ref": "#/components/schemas/BiddingResult"
+      },
+
+      "ActualControllerRequest": {
+        "type": "object",
+        "required": ["entInfo"],
+        "properties": {
+          "entInfo": { "type": "string", "description": "企业名称 / 统一社会信用代码（⚠️ 必须是 entInfo）" }
+        },
+        "description": "路径大小写敏感：POST /saic/SaicinvWh（小写 w）。"
+      },
+
+      "ActualControllerResult": {
+        "type": "object",
+        "properties": {
+          "P0020019Status": { "type": "string" },
+          "P0020019Data": {
+            "type": "object",
+            "description": "内部字段结构待实测补齐，当前按原样透传"
+          }
+        }
+      },
+
+      "ApiResponseActualController": {
+        "allOf": [
+          { "$ref": "#/components/schemas/ApiEnvelope" },
+          {
+            "type": "object",
+            "properties": {
+              "resultData": { "$ref": "#/components/schemas/ActualControllerResult" }
+            }
+          }
+        ]
+      }
+    }
+  },
+
+  "x-apifox-folder": "Elecredit 企业风控",
+  "x-apifox-orders": [
+    "/mohu/wh",
+    "/saic/enterprise/deep/wh",
+    "/enterprise/companyLevel/wh",
+    "/enterprise/taxInfo",
+    "/enterprise/adminPunishment",
+    "/risk/sifaInfo/wh",
+    "/litigation/xgbzxrPeople/wh",
+    "/saic/equityPenetration",
+    "/enterprise/biddingYPageWh",
+    "/saic/SaicinvWh"
+  ]
+}

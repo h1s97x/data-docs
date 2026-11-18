@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "note": "elecredit SDK 机器可读契约唯一真源：端点、错误分类、司法 type 枚举。tools/gen_code.py 从这里生成 7 种语言的端点/错误/枚举产物；修改本文件后必须重跑生成器，CI 的 gen_code --check 会拦截不同步。",
+  "schema": {
+    "version": 1,
+    "endpointKeys": ["code", "path", "description", "paging", "productCode"],
+    "errorKeys": ["code", "category", "exitCode", "retryable", "hint"],
+    "categories": ["authentication", "billing", "upstream", "rate_limit", "validation", "internal"],
+    "exitCodes": {"internal": 1, "validation": 2, "authentication": 3, "billing": 3, "upstream": 4, "rate_limit": 4},
+    "endpointKeyPattern": "^[a-z][a-z0-9_]*$",
+    "productCodePattern": "^P\\d+$"
+  },
+  "endpoints": {
+    "fuzzy":             {"code": "A07",      "path": "/mohu/wh",                    "description": "企业工商模糊查询",               "paging": true,  "productCode": "P0010068"},
+    "deep":              {"code": "A03",      "path": "/saic/enterprise/deep/wh",    "description": "企业工商深度查询",               "paging": false, "productCode": "P0010058"},
+    "scale":             {"code": "A04",      "path": "/enterprise/companyLevel/wh", "description": "企业大中小微划型",               "paging": false, "productCode": "P0010070"},
+    "tax":               {"code": "B06",      "path": "/enterprise/taxInfo",         "description": "企业税务信用查询",               "paging": true,  "productCode": "P0030125"},
+    "admin_punishment":  {"code": "D07",      "path": "/enterprise/adminPunishment", "description": "行政处罚",                       "paging": true,  "productCode": "P0030126"},
+    "judicial":          {"code": "D11",      "path": "/risk/sifaInfo/wh",           "description": "企业司法模糊查询",               "paging": true,  "productCode": "P0030089"},
+    "xgbzxr":            {"code": "D14",      "path": "/litigation/xgbzxrPeople/wh", "description": "限消人员",                       "paging": false, "productCode": "P1020054"},
+    "graph":             {"code": "F09",      "path": "/saic/equityPenetration",     "description": "企业股权图谱（60s 超时）",       "paging": false, "productCode": "P0020023"},
+    "bidding":           {"code": "B04",      "path": "/enterprise/biddingYPageWh",  "description": "招投标信息",                     "paging": true,  "productCode": "P0010034"},
+    "actual_controller": {"code": "P0020019", "path": "/saic/SaicinvWh",             "description": "实控人（法人/股东穿透）",        "paging": false, "productCode": "P0020019"}
+  },
+  "judicial": {
+    "types": [
+      {"value": "shixin",  "cnName": "失信"},
+      {"value": "zxgg",    "cnName": "执行公告"},
+      {"value": "cpws",    "cnName": "裁判文书"},
+      {"value": "fygg",    "cnName": "法院公告"},
+      {"value": "ktgg",    "cnName": "开庭公告"},
+      {"value": "bgt",     "cnName": "公告（其他）"},
+      {"value": "pccz",    "cnName": "破产重整"},
+      {"value": "sdgg",    "cnName": "送达公告"},
+      {"value": "zbaj",    "cnName": "中标案件"},
+      {"value": "lian",    "cnName": "关联"},
+      {"value": "xzgxf",   "cnName": "限制高消费"},
+      {"value": "pmgg",    "cnName": "拍卖公告"}
+    ],
+    "maxRange": 20
+  },
+  "errors": [
+    {"code": "SYS001", "category": "authentication", "exitCode": 3, "retryable": false, "hint": ""},
+    {"code": "SYS002", "category": "authentication", "exitCode": 3, "retryable": false, "hint": ""},
+    {"code": "SYS003", "category": "authentication", "exitCode": 3, "retryable": false, "hint": ""},
+    {"code": "SYS004", "category": "authentication", "exitCode": 3, "retryable": false, "hint": ""},
+    {"code": "SYS005", "category": "billing", "exitCode": 3, "retryable": false, "hint": "签名已通过，属余额问题：充值后即可继续，不必改凭据"},
+    {"code": "SYS006", "category": "authentication", "exitCode": 3, "retryable": false, "hint": ""},
+    {"code": "SYS007", "category": "upstream", "exitCode": 4, "retryable": true, "hint": "流水号重复，换新 requestSn 后重试一次"},
+    {"code": "SYS008", "category": "rate_limit", "exitCode": 4, "retryable": true, "hint": ""},
+    {"code": "SYS009", "category": "validation", "exitCode": 2, "retryable": false, "hint": "请求体过大，缩小后重试（如降低 graph 的 level 或减少 range）"},
+    {"code": "SYS044", "category": "upstream", "exitCode": 4, "retryable": false, "hint": "核对端点路径的大小写（如 /saic/SaicinvWh 是小写 w）；重试不会改善"},
+    {"code": "400", "category": "validation", "exitCode": 2, "retryable": false, "hint": ""},
+    {"code": "999", "category": "upstream", "exitCode": 4, "retryable": true, "hint": ""},
+    {"code": "HTTP_429", "category": "rate_limit", "exitCode": 4, "retryable": true, "hint": ""},
+    {"code": "HTTP_4XX", "category": "validation", "exitCode": 2, "retryable": false, "hint": ""},
+    {"code": "HTTP_5XX", "category": "upstream", "exitCode": 4, "retryable": true, "hint": ""},
+    {"code": "NETWORK", "category": "upstream", "exitCode": 4, "retryable": true, "hint": ""},
+    {"code": "UNKNOWN_CODE", "category": "upstream", "exitCode": 4, "retryable": true, "hint": ""},
+    {"code": "LOCAL_USAGE", "category": "validation", "exitCode": 2, "retryable": false, "hint": ""},
+    {"code": "INTERNAL", "category": "internal", "exitCode": 1, "retryable": false, "hint": ""}
+  ]
+}
