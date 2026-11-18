@@ -16,12 +16,12 @@ const SECRET_PATTERNS = [
 ];
 
 const sha256 = (content) => createHash('sha256').update(content).digest('hex');
-const walk = (dir) => {
+const walk = (dir, base = dir) => {
   const out = [];
   for (const name of readdirSync(dir)) {
     const path = join(dir, name);
-    if (statSync(path).isDirectory()) out.push(...walk(path));
-    else out.push(relative(dir, path).replaceAll('\\', '/'));
+    if (statSync(path).isDirectory()) out.push(...walk(path, base));
+    else out.push(relative(base, path).replaceAll('\\', '/'));
   }
   return out;
 };
