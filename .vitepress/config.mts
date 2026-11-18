@@ -26,6 +26,10 @@ export default defineConfig({
   srcExclude: ['README.md', 'projects/**/manifest.json'],
   head: [['meta', { name: 'theme-color', content: '#0b66ff' }]],
   markdown: { lineNumbers: true },
+  vite: {
+    // CNB 端口转发域名（*.cnb.run）默认不在 Vite 的 host 白名单里，需显式放行
+    server: { allowedHosts: ['.cnb.run'] },
+  },
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
