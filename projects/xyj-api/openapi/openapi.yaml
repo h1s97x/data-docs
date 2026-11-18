@@ -1,0 +1,157 @@
+openapi: 3.0.3
+info:
+  title: xyj-api 上游网关协议
+  version: "1.0.0"
+  description: |
+    本文件是上游 `/xyj-api/external/*` 协议的人类/机器可读契约。真实 host 由部署决定，
+    servers.url 仅为占位。请求一律 POST + JSON，body 由 `head`（机构与签名）+ `body`（业务参数）组成；
+    `sign` 对业务 body 做 SHA1withRSA（规范化口径见 docs/protocol.md §2）。
+
+    响应信封 `code/msg/data`，业务失败不抛异常，由调用方按 code/success 判定。
+    响应 `sign` 只覆盖 `data`，不能替代 HTTPS（见 docs/protocol.md §3.1）。
+  x-protocol:
+    signing: SHA1withRSA (PKCS#1 v1.5), Base64, canonical k=v sorted by lowercase key
+    responseVerifyScope: data-only
+    errorPolicy: business-failure-in-envelope
+servers:
+  - url: http://gw.example.com
+    description: 占位；实际地址由 XYJ_BASE_URL / 部署配置给出
+tags:
+  - name: 上下游
+    description: 企业发票流水上下游查询
+  - name: 报告
+    description: 报告申请与查询
+paths:
+  /xyj-api/external/queryGeneralData:
+    post:
+      tags: [上下游]
+      operationId: queryGeneralData
+      summary: 企业上下游查询（发票流水口径）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpstreamRequest"
+            example:
+              head: {orgCode: WHYH001, orgName: 某某银行, sign: "<base64>"}
+              body:
+                companyList: [{companyName: 某企业, nsrsbh: "91330000TEST0000XX"}]
+                type: "1"
+                key: "220_xxx"
+                params: ""
+      responses:
+        "200":
+          description: 信封；业务成败见 success/code
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+              example:
+                code: "200"
+                msg: 操作成功
+                data: [{jyfx: 上游, hxqyName: A, oneName: B}]
+                sign: "<base64>"
+                success: true
+  /xyj-api/external/report/applyReport:
+    post:
+      tags: [报告]
+      operationId: applyReport
+      summary: 申请报告；成功时 data.taskNo 用于后续查询
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportApplyRequest"
+      responses:
+        "200":
+          description: 信封；成功时 data.taskNo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+  /xyj-api/external/report/queryReportInfo:
+    post:
+      tags: [报告]
+      operationId: queryReportInfo
+      summary: 按 taskNo 查询报告
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportQueryRequest"
+            example:
+              head: {orgCode: WHYH001, orgName: 某某银行, sign: "<base64>"}
+              body: {taskNo: "T-123", params: "{\"queryJson\": true}"}
+      responses:
+        "200":
+          description: 信封
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+components:
+  schemas:
+    Head:
+      type: object
+      required: [orgCode, orgName, sign]
+      properties:
+        orgCode: {type: string, description: 机构编码}
+        orgName: {type: string, description: 机构名称}
+        sign: {type: string, description: 业务 body 的 SHA1withRSA 签名（Base64）}
+    UpstreamRequest:
+      type: object
+      required: [head, body]
+      properties:
+        head: {$ref: "#/components/schemas/Head"}
+        body:
+          type: object
+          required: [companyList, type, key]
+          properties:
+            companyList:
+              type: array
+              items:
+                type: object
+                required: [companyName, nsrsbh]
+                properties:
+                  companyName: {type: string}
+                  nsrsbh: {type: string}
+            type: {type: string, enum: ["1", "2"], description: "1 裂变 / 2 标签"}
+            key: {type: string, description: 数据 key}
+            params: {type: string, description: "空串；sign 规范化时跳过空值"}
+    ReportApplyRequest:
+      type: object
+      required: [head, body]
+      properties:
+        head: {$ref: "#/components/schemas/Head"}
+        body:
+          type: object
+          required: [key, nsrmc, nsrsbh]
+          properties:
+            key: {type: string, description: 报告产品 key}
+            nsrmc: {type: string, description: 企业名称}
+            nsrsbh: {type: string, description: 统一社会信用代码}
+    ReportQueryRequest:
+      type: object
+      required: [head, body]
+      properties:
+        head: {$ref: "#/components/schemas/Head"}
+        body:
+          type: object
+          required: [taskNo]
+          properties:
+            taskNo: {type: string}
+            params: {type: string, description: "字符串，内容为 JSON {\"queryJson\": true}"}
+    Envelope:
+      type: object
+      description: 统一响应信封；成功判定 success is True 或 code ∈ {200, 0000}
+      properties:
+        code: {oneOf: [{type: string}, {type: integer}]}
+        msg: {type: string}
+        data: {}
+        datas: {type: object}
+        sign: {type: string, description: 只覆盖 data 的签名}
+        timestamp: {type: integer}
+        success: {type: boolean}

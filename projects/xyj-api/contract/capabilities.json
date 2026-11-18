@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "note": "能力、路由、MCP tool、Skill 命令与降级口径的唯一真源。错误分类不在此复制，运行时从 service/capabilities.py 的 CATEGORY_HINT 读取；MCP tools.json 与文档表格由 contract/verify.py sync 生成，勿手改。",
+  "gatewayNote": "xyj-api 网关提供 3 个端点（上下游查询 / 报告申请 / 报告查询），全部 POST + SHA1withRSA 请求签名。响应验签只覆盖 data（见 docs/protocol.md §3.1）；业务失败不抛异常，由信封 code/success 判定。空 data 不代表服务不可达，不得伪造数据。",
+  "degradeReasons": {
+    "configuration": "服务端未配置 XYJ_* 网关凭据",
+    "validation": "请求参数不合法",
+    "contract": "响应信封未按预期解析或验签失败",
+    "transport": "网关网络/传输失败",
+    "pending": "能力尚未实现"
+  },
+  "categoryHint": {
+    "configuration": "服务端补 XYJ_BASE_URL / XYJ_ORG_CODE / XYJ_ORG_NAME / XYJ_PRIVATE_KEY",
+    "validation": "核对企业名/税号/data_key 与查询类型后再提交",
+    "contract": "核对网关信封结构与验签公钥配置",
+    "upstream": "按 retryable 指示退避重试；余额/额度问题需联系上游",
+    "auth": "检查调用方 Token 是否有效、scope 是否足够",
+    "internal": "查看服务端日志"
+  },
+  "capabilities": [
+    {
+      "id": "capabilities",
+      "method": "GET",
+      "path": "/v1/capabilities",
+      "pathTemplate": "/v1/capabilities",
+      "handler": "capabilities",
+      "argKind": "none",
+      "requiresGateway": false,
+      "auth": true,
+      "scope": "capabilities",
+      "mcpTool": "xyj_capabilities",
+      "mcpDescription": "列出本服务的全部能力与对应端点（离线，无需网关凭据）",
+      "mcpInputSchema": { "type": "object", "properties": {}, "additionalProperties": false },
+      "skillCommand": "--capability capabilities",
+      "summary": "列出能力清单与端点元数据",
+      "gatewayLabel": "不需要"
+    },
+    {
+      "id": "upstream",
+      "method": "POST",
+      "path": "/v1/query/upstream",
+      "pathTemplate": "/v1/query/upstream",
+      "handler": "upstream",
+      "argKind": "query_body",
+      "requiresGateway": true,
+      "auth": true,
+      "scope": "upstream",
+      "mcpTool": "xyj_upstream",
+      "mcpDescription": "企业上下游查询（发票流水口径）；返回按方向切分的上/下游记录",
+      "mcpInputSchema": {
+        "type": "object",
+        "properties": {
+          "company_name": { "type": "string", "description": "企业名称" },
+          "nsrsbh": { "type": "string", "description": "纳税人识别号" },
+          "data_key": { "type": "string", "description": "数据查询 key" },
+          "query_type": { "type": "string", "enum": ["1", "2"], "description": "1 裂变（默认）/ 2 标签" }
+        },
+        "required": ["company_name", "nsrsbh", "data_key"],
+        "additionalProperties": false
+      },
+      "skillCommand": "--capability upstream",
+      "summary": "企业上下游查询（发票流水）",
+      "gatewayLabel": "需要 XYJ_*"
+    },
+    {
+      "id": "report_apply",
+      "method": "POST",
+      "path": "/v1/query/report-apply",
+      "pathTemplate": "/v1/query/report-apply",
+      "handler": "report_apply",
+      "argKind": "query_body",
+      "requiresGateway": true,
+      "auth": true,
+      "scope": "report_apply",
+      "mcpTool": "xyj_report_apply",
+      "mcpDescription": "申请报告；成功时返回 taskNo 供后续查询使用",
+      "mcpInputSchema": {
+        "type": "object",
+        "properties": {
+          "nsrmc": { "type": "string", "description": "企业名称" },
+          "nsrsbh": { "type": "string", "description": "统一社会信用代码" },
+          "report_key": { "type": "string", "description": "报告产品 key" }
+        },
+        "required": ["nsrmc", "nsrsbh", "report_key"],
+        "additionalProperties": false
+      },
+      "skillCommand": "--capability report_apply",
+      "summary": "申请报告，返回 taskNo",
+      "gatewayLabel": "需要 XYJ_*"
+    },
+    {
+      "id": "report_query",
+      "method": "POST",
+      "path": "/v1/query/report-query",
+      "pathTemplate": "/v1/query/report-query",
+      "handler": "report_query",
+      "argKind": "query_body",
+      "requiresGateway": true,
+      "auth": true,
+      "scope": "report_query",
+      "mcpTool": "xyj_report_query",
+      "mcpDescription": "按 taskNo 查询已申请的报告（轮询由调用方编排）",
+      "mcpInputSchema": {
+        "type": "object",
+        "properties": {
+          "task_no": { "type": "string", "description": "报告申请返回的 taskNo" }
+        },
+        "required": ["task_no"],
+        "additionalProperties": false
+      },
+      "skillCommand": "--capability report_query",
+      "summary": "按 taskNo 查询报告",
+      "gatewayLabel": "需要 XYJ_*"
+    },
+    {
+      "id": "ping",
+      "method": "GET",
+      "path": "/v1/ping",
+      "pathTemplate": "/v1/ping",
+      "handler": null,
+      "argKind": "none",
+      "requiresGateway": false,
+      "auth": false,
+      "scope": null,
+      "mcpTool": "xyj_ping",
+      "mcpDescription": "检查能力服务是否可达（不鉴权，不代表网关凭据可用）",
+      "mcpInputSchema": { "type": "object", "properties": {}, "additionalProperties": false },
+      "skillCommand": "--capability ping",
+      "summary": "健康检查（不鉴权）",
+      "gatewayLabel": "不需要"
+    }
+  ]
+}

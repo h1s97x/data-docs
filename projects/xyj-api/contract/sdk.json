@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "note": "xyj-api SDK 的机器可读契约唯一真源：端点、模型字段、错误契约。tools/gen_code.py 从这里生成 8 种语言的模型/端点/错误码产物；修改本文件后必须重跑生成器，CI 的 gen_code --check 会拦截不同步。",
+  "schema": {
+    "version": 1,
+    "fieldTypes": ["string"],
+    "languageTypes": {
+      "python": {"string": "str | None"},
+      "typescript": {"string": "string | null"},
+      "java": {"string": "String"},
+      "go": {"string": "*string"},
+      "csharp": {"string": "string?"},
+      "rust": {"string": "Option<String>"},
+      "c": {"string": "const char *"}
+    },
+    "modelKeys": ["cnName", "description", "fields"],
+    "fieldKeys": ["name", "cnName", "type"],
+    "endpointKeys": ["path", "cnName", "model", "collection"],
+    "errorKeys": ["className", "category", "retryable", "hint", "exitCode"],
+    "modelNamePattern": "^[A-Z][A-Za-z0-9]*$",
+    "fieldNamePattern": "^[a-z][A-Za-z0-9_]*$"
+  },
+  "models": {
+    "UpstreamRow": {
+      "cnName": "企业上下游流水记录",
+      "description": "发票上下游查询的单条记录；字段来自网关原始 JSON，缺失降级为空串。",
+      "fields": [
+        {"name": "hxqyNsrsbh", "cnName": "核心企业纳税人识别号", "type": "string"},
+        {"name": "hxqyName", "cnName": "核心企业名称", "type": "string"},
+        {"name": "hxqyjyje12m", "cnName": "近12个月交易金额", "type": "string"},
+        {"name": "hymxMc", "cnName": "行业门类名称", "type": "string"},
+        {"name": "oneSwSqsj", "cnName": "对手方税务登记时间", "type": "string"},
+        {"name": "oneCityName", "cnName": "对手方城市", "type": "string"},
+        {"name": "oneFpSqsj", "cnName": "对手方发票时间", "type": "string"},
+        {"name": "oneName", "cnName": "对手方名称", "type": "string"},
+        {"name": "oneProvName", "cnName": "对手方省份", "type": "string"},
+        {"name": "hxqyjyzb12m", "cnName": "近12个月交易占比", "type": "string"},
+        {"name": "hymxDm", "cnName": "行业门类代码", "type": "string"},
+        {"name": "jyfx", "cnName": "交易方向（上游/下游）", "type": "string"},
+        {"name": "oneNsrsbh", "cnName": "对手方纳税人识别号", "type": "string"},
+        {"name": "clnx", "cnName": "成立年限", "type": "string"}
+      ]
+    },
+    "ReportTask": {
+      "cnName": "报告申请任务",
+      "description": "报告申请成功后返回的 taskNo，供查询报告使用。",
+      "fields": [
+        {"name": "taskNo", "cnName": "任务编号", "type": "string"}
+      ]
+    }
+  },
+  "endpoints": {
+    "upstream_downstream": {
+      "path": "/xyj-api/external/queryGeneralData",
+      "cnName": "企业上下游查询（发票流水口径）",
+      "model": "UpstreamRow",
+      "collection": true
+    },
+    "report_apply": {
+      "path": "/xyj-api/external/report/applyReport",
+      "cnName": "报告申请",
+      "model": "ReportTask",
+      "collection": false
+    },
+    "report_query": {
+      "path": "/xyj-api/external/report/queryReportInfo",
+      "cnName": "报告查询",
+      "model": "ReportTask",
+      "collection": false
+    }
+  },
+  "errors": [
+    {
+      "className": "XyjError",
+      "category": "internal",
+      "retryable": false,
+      "hint": "查看服务端日志",
+      "exitCode": 3
+    },
+    {
+      "className": "ConfigError",
+      "category": "configuration",
+      "retryable": false,
+      "hint": "补 XYJ_BASE_URL / XYJ_ORG_CODE / XYJ_ORG_NAME / XYJ_PRIVATE_KEY",
+      "exitCode": 2
+    },
+    {
+      "className": "SignatureError",
+      "category": "signature",
+      "retryable": false,
+      "hint": "检查私钥是否为 Base64 PKCS#8 或完整 PEM",
+      "exitCode": 2
+    },
+    {
+      "className": "ResponseVerifyError",
+      "category": "verify",
+      "retryable": false,
+      "hint": "检查 XYJ_PUBLIC_KEY 是否与网关私钥配对；验签只覆盖 data",
+      "exitCode": 4
+    },
+    {
+      "className": "UpstreamError",
+      "category": "upstream",
+      "retryable": true,
+      "hint": "网络/网关故障，按退避重试；HTTP 4xx 通常不重试",
+      "exitCode": 5
+    },
+    {
+      "className": "ValidationError",
+      "category": "validation",
+      "retryable": false,
+      "hint": "核对请求参数后再提交",
+      "exitCode": 2
+    },
+    {
+      "className": "SpecPendingError",
+      "category": "configuration",
+      "retryable": false,
+      "hint": "使用 XyjClient.from_env() 或显式注入 transport",
+      "exitCode": 2
+    }
+  ]
+}

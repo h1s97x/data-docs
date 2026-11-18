@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "generatedBy": "tools/gen_code.py",
+  "generatorSha256": "cb504a7ad95718ad3cbbddd3be0f575d42b815dad8c77872274fbbb34cc18fd8",
+  "contract": {
+    "version": 1,
+    "models": 2,
+    "fields": 15,
+    "endpoints": 3,
+    "errors": 7
+  },
+  "publicApi": {
+    "models": [
+      "ReportTask",
+      "UpstreamRow"
+    ],
+    "endpoints": [
+      "report_apply",
+      "report_query",
+      "upstream_downstream"
+    ],
+    "errorClasses": [
+      "ConfigError",
+      "ResponseVerifyError",
+      "SignatureError",
+      "SpecPendingError",
+      "UpstreamError",
+      "ValidationError",
+      "XyjError"
+    ]
+  },
+  "files": [
+    {
+      "path": "sdks/c/include/xyj_types.h",
+      "sha256": "bb61d74a813d6cc099cc4daf9ebf216f543172155e1f624e9217d6eb897e00b8"
+    },
+    {
+      "path": "sdks/c/src/xyj_types.c",
+      "sha256": "6f04edee53743b274879f1e14536964a6a86bff315c0316908f36069edb603d5"
+    },
+    {
+      "path": "sdks/csharp/Xyj/TypesGenerated.cs",
+      "sha256": "1351a8191a80ad14b84eb9c642be9a8927e8f56b3446ba386e89ea98a6d234e0"
+    },
+    {
+      "path": "sdks/go/types_gen.go",
+      "sha256": "3c7d4b0028472cb1ef2fad02060ff86868adad7dd66bbba0b686b66c1e254ba5"
+    },
+    {
+      "path": "sdks/java/src/main/java/com/xyj/TypesGenerated.java",
+      "sha256": "ecc270524d294cc348cd4d8c7a1facfd6705a486fa93a1db70660a7fd001fdc9"
+    },
+    {
+      "path": "sdks/python/xyj_api/endpoints_generated.py",
+      "sha256": "7db8a45f9151ad51ab4a869449d0d2b165202bc3e2e55c08e789b7d130a49c69"
+    },
+    {
+      "path": "sdks/python/xyj_api/errors_generated.py",
+      "sha256": "09ae46c05a1d25ae7af504c6de9559628aa7b04399d97ebec854bd9123c41638"
+    },
+    {
+      "path": "sdks/python/xyj_api/models_generated.py",
+      "sha256": "15130dadb0684531defba2cb5e8b1ee2666144b80769d3e40710b0f4f1558f76"
+    },
+    {
+      "path": "sdks/rust/src/types_generated.rs",
+      "sha256": "720190e0356701e0d9cb9e86306b0925b95951b59b06624486901de4ab7dbd69"
+    },
+    {
+      "path": "sdks/typescript/src/types_generated.ts",
+      "sha256": "3b5a7f3bc865739478bb5dc1830425e67e3599863b036a3f779b7a0a5a2444da"
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+openapi: 3.0.3
+info:
+  title: xyj-api 能力服务
+  version: "1.0.0"
+  description: |
+    调用方视角的能力契约。只需一个 Bearer Token，不接触网关凭据。
+
+    **上游业务失败仍返回 HTTP 200**，必须按 body 的 `success` 判定，不能只看状态码。
+    `ping` 只证明服务存活，不证明网关凭据可用。能力清单的机器真源是
+    `contract/capabilities.json`；本文件描述其 HTTP 投影。
+servers:
+  - url: http://127.0.0.1:8804
+    description: 本地回环
+  - url: "{host}:{port}"
+    description: 内网部署
+    variables:
+      host: {default: xyj-service}
+      port: {default: "8804"}
+tags:
+  - name: 健康检查
+  - name: 能力
+security:
+  - bearerAuth: []
+paths:
+  /v1/ping:
+    get:
+      tags: [健康检查]
+      operationId: ping
+      summary: 服务存活探针（不鉴权）
+      security: []
+      responses:
+        "200":
+          description: 存活；不代表网关凭据可用
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean}
+                  status: {type: string}
+                  auth_mode: {type: string}
+  /healthz:
+    get:
+      tags: [健康检查]
+      operationId: healthz
+      summary: 存活探针（不鉴权）
+      security: []
+      responses:
+        "200": {description: ok}
+  /v1/capabilities:
+    get:
+      tags: [能力]
+      operationId: listCapabilities
+      summary: 列出能力清单（离线，scope=capabilities）
+      responses:
+        "200":
+          description: 能力列表
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Ok"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          capabilities:
+                            type: array
+                            items: {$ref: "#/components/schemas/Capability"}
+        "401": {$ref: "#/components/responses/Unauthorized"}
+  /v1/query/upstream:
+    post:
+      tags: [能力]
+      operationId: queryUpstream
+      summary: 企业上下游查询（scope=upstream）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/UpstreamReq"}
+      responses:
+        "200":
+          description: 成功或结构化失败（均 HTTP 200）
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Ok"
+                  - $ref: "#/components/schemas/Fail"
+        "401": {$ref: "#/components/responses/Unauthorized"}
+        "403": {$ref: "#/components/responses/Forbidden"}
+        "429": {$ref: "#/components/responses/RateLimited"}
+  /v1/query/report-apply:
+    post:
+      tags: [能力]
+      operationId: applyReport
+      summary: 申请报告（scope=report_apply）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/ReportApplyReq"}
+      responses:
+        "200":
+          description: 成功时 data.taskNo
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Ok"
+                  - $ref: "#/components/schemas/Fail"
+  /v1/query/report-query:
+    post:
+      tags: [能力]
+      operationId: queryReport
+      summary: 按 taskNo 查询报告（scope=report_query）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/ReportQueryReq"}
+      responses:
+        "200":
+          description: 报告内容
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Ok"
+                  - $ref: "#/components/schemas/Fail"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 调用方 Token；用 python -m service.issue_token issue 签发
+  responses:
+    Unauthorized:
+      description: Token 缺失或无效
+    Forbidden:
+      description: scope 不足或 IP 不在白名单
+    RateLimited:
+      description: 触发限流
+  schemas:
+    Ok:
+      type: object
+      required: [success, code, capability, data]
+      properties:
+        success: {type: boolean, enum: [true]}
+        code: {type: string, example: OK}
+        capability: {type: string}
+        data: {}
+        _compacted: {type: boolean, description: 结果被有界投影压缩}
+    Fail:
+      type: object
+      required: [success, code, category, retryable, degrade_reason, msg]
+      properties:
+        success: {type: boolean, enum: [false]}
+        code: {type: string}
+        category:
+          type: string
+          enum: [configuration, validation, contract, upstream, auth, internal]
+        retryable: {type: boolean, description: 是否可退避重试；一律以此字段为准}
+        degrade_reason: {type: string}
+        hint: {type: string}
+        msg: {type: string}
+    Capability:
+      type: object
+      properties:
+        id: {type: string}
+        method: {type: string}
+        path: {type: string}
+        summary: {type: string}
+        requiresGateway: {type: boolean}
+        scope: {type: string, nullable: true}
+    UpstreamReq:
+      type: object
+      required: [company_name, nsrsbh, data_key]
+      properties:
+        company_name: {type: string}
+        nsrsbh: {type: string}
+        data_key: {type: string}
+        query_type: {type: string, enum: ["1", "2"], default: "1"}
+    ReportApplyReq:
+      type: object
+      required: [nsrmc, nsrsbh, report_key]
+      properties:
+        nsrmc: {type: string}
+        nsrsbh: {type: string}
+        report_key: {type: string}
+    ReportQueryReq:
+      type: object
+      required: [task_no]
+      properties:
+        task_no: {type: string}

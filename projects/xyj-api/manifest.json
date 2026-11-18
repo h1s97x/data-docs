@@ -1,0 +1,120 @@
+{
+  "schema": 1,
+  "source": "xyj-api@e4807a6",
+  "generatedBy": "tools/export_docs.py",
+  "contractVersion": 1,
+  "generatorSha256": "cb504a7ad95718ad3cbbddd3be0f575d42b815dad8c77872274fbbb34cc18fd8",
+  "vectorsVersion": 1,
+  "redactions": [
+    "\\b(?:10|172|192)\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b",
+    "(?:XYJ|EDS)_(?:PRIVATE_KEY|APP_KEY|TOKEN)\\s*=\\s*[^<\\s$'\\\"\\n]{8,}",
+    "-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----[\\s\\S]*?-----END (?:RSA |EC |DSA )?PRIVATE KEY-----"
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "89276953da252aa243947fc2059b9b6a35ba4cd69d81db416b894e9743900403",
+      "bytes": 5729
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "45519bf2ae612779251e9c1ad524be1df4bf2632cb234fe0f5fbc8d710f4371b",
+      "bytes": 2843
+    },
+    {
+      "path": "docs/INTEGRATION.md",
+      "sha256": "4882585965b067d3381a07fc4ce84c0421d05d68e3a445fc7e64597625ae660b",
+      "bytes": 3348
+    },
+    {
+      "path": "docs/protocol.md",
+      "sha256": "b401b9072ae5b8be4eec8c69db6a669af7c7eeaedefb7b464eb17c23457aceec",
+      "bytes": 5700
+    },
+    {
+      "path": "docs/publishing.md",
+      "sha256": "6fa4357f07fabe21cf1ef815b8d28577f53c7ad38b2eda695d7ff400fa96b680",
+      "bytes": 3522
+    },
+    {
+      "path": "docs/wiki/README.md",
+      "sha256": "2b5a01dd62e459794d2f61ae242a327f0f93ec4cd0d99469b5ae11f53c2a4b3c",
+      "bytes": 791
+    },
+    {
+      "path": "docs/wiki/01-overview.md",
+      "sha256": "8fcca64f6b0bc6d8e4d19c1cf34a63b1f21df3e6e96d89a80877c33fe650e5ff",
+      "bytes": 2305
+    },
+    {
+      "path": "docs/wiki/02-architecture.md",
+      "sha256": "c6bf87df205963ef8419e559a20b8c1dec3160dd3926fe479da0bc854500aaee",
+      "bytes": 2462
+    },
+    {
+      "path": "docs/wiki/07-runbook.md",
+      "sha256": "bc85cd615fa23dfe405b1070c94fac4dfe4b5b8fe233fe5b108e9fed19ba14a0",
+      "bytes": 2386
+    },
+    {
+      "path": "docs/wiki/08-known-issues.md",
+      "sha256": "7f82b85ba013e805cbfac81aaef87106022f52d6eb7cc4944ad9fa72cee5f896",
+      "bytes": 2696
+    },
+    {
+      "path": "openapi/openapi.yaml",
+      "sha256": "f44091939c8130709473899a09fe9120a6ab98390b42eab96da446dd31e37d7e",
+      "bytes": 5614
+    },
+    {
+      "path": "openapi/service.yaml",
+      "sha256": "5ab30473cf722065324a94429875bb8d907290951d5c823740f3be949559e070",
+      "bytes": 6117
+    },
+    {
+      "path": "openapi/README.md",
+      "sha256": "c283b914c06410867023742447be5b3b1356e026a414973e6bdd688a81dce2e0",
+      "bytes": 769
+    },
+    {
+      "path": "contract/sdk.json",
+      "sha256": "bbbf2fd2bbe977f314597df3b7832e8110d43d73c3928553b6b525a0c4f58642",
+      "bytes": 4614
+    },
+    {
+      "path": "contract/generated.json",
+      "sha256": "8b68ac6cde9c14eb163605c5456223f2198109c4d9c22f6087a2683cdb26f78c",
+      "bytes": 2130
+    },
+    {
+      "path": "contract/capabilities.json",
+      "sha256": "be8d01c56eb80dfc9ea1d29c9d0a70439bb50c7dd5baa533d79b0a4e534328af",
+      "bytes": 5548
+    },
+    {
+      "path": "sdks/README.md",
+      "sha256": "f36f15b0a5361c18cdb7e6e788a4080590ca6580b36dced2470c26511d460111",
+      "bytes": 2199
+    },
+    {
+      "path": "sdks/python/README.md",
+      "sha256": "add00022f9c528a484db2ff257058bb9c663bd214dec93757e7b459f824bb0c7",
+      "bytes": 5649
+    },
+    {
+      "path": "service/README.md",
+      "sha256": "fdaa43fd22a3449113f52e4ff3f7d6af410aea84216a37247e815029129696a9",
+      "bytes": 3979
+    },
+    {
+      "path": "mcp/README.md",
+      "sha256": "a4479de3f7636d9396af85a7b97c8e0412596b705b8ad76a54259e6fd4bd493c",
+      "bytes": 1892
+    },
+    {
+      "path": "skills/xyj-service/SKILL.md",
+      "sha256": "8aa9c3e758d4701778b2f248ccbf94402722368e6d8417300a1c128272a4bc6c",
+      "bytes": 4121
+    }
+  ]
+}
