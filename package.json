@@ -1,0 +1,17 @@
+{
+  "name": "data-docs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.0.0",
+  "description": "企业风控数据产品族统一文档站（VitePress）—— 内容由 xyj-api / altdatahub / elecredit 主仓脱敏快照同步",
+  "scripts": {
+    "dev": "vitepress dev --port 5173",
+    "build": "node scripts/gen-nav.mjs && vitepress build",
+    "preview": "vitepress preview --port 4173",
+    "check": "node scripts/check-snapshots.mjs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

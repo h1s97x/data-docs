@@ -1,0 +1,66 @@
+# =============================================================================
+# data-docs：xyj-api / altdatahub / elecredit 统一文档站（内容源）
+#
+# 三层分工：
+#   CNB 主仓（xyj-api / altdatahub / elecredit）
+#        │  main.push 推脱敏快照到本站 projects/<slug>/（各主仓 CI 负责）
+#        ▼
+#   CNB data-docs（本仓，内容源 + 校验 + 构建）
+#        │  main.push 单向 force 同步到 GitHub 镜像仓
+#        ▼
+#   GitHub h1s97x/data-docs（发布源）→ GitHub Actions 构建并发布 Pages
+#
+# 为什么 GitHub 侧再构建一次：让 Pages 基于「被发布的那份内容」构建，
+# 避免 CNB 构建产物与 GitHub 内容版本漂移（沿用 elecredit-docs 已验证模式）。
+# 凭据：GITHUB_USERNAME / GITHUB_TOKEN 来自 h1s97x/secret-env（imports 引用变量名）。
+# 脚本统一「单行 + 分号」：CNB 会折叠 script 换行，多行 if/fi 会被拼坏。
+# =============================================================================
+
+.git-sync-settings: &git-sync-settings
+  target_url: https://github.com/h1s97x/data-docs.git
+  auth_type: https
+  username: ${GITHUB_USERNAME}
+  password: ${GITHUB_TOKEN}
+  branch: main
+
+# 首次建 Pages 需要 admin 作用域，Actions 内置 GITHUB_TOKEN 拿不到；
+# 用 secret-env 的 PAT 幂等启用 + 触发 docs workflow。平时不跑，仅手动。
+.bootstrap-github-pages: &bootstrap-github-pages
+  name: bootstrap-github-pages (manual)
+  imports:
+    - https://cnb.cool/h1s97x/secret-env/-/blob/main/env.yml
+  env:
+    GH_REPO: h1s97x/data-docs
+  stages:
+    - name: ensure pages enabled + dispatch docs workflow
+      image: node:22
+      script: |
+        node --input-type=module -e "const repo=process.env.GH_REPO;const auth='Basic '+Buffer.from(process.env.GITHUB_USERNAME+':'+process.env.GITHUB_TOKEN).toString('base64');const h={Authorization:auth,'User-Agent':'cnb-docs-pipeline','X-GitHub-Api-Version':'2022-11-28'};const api='https://api.github.com/repos/'+repo;const jh=Object.assign({'Content-Type':'application/json'},h);const g=await fetch(api+'/pages',{headers:h});console.log('GET  /pages ->',g.status);if(g.status!==404&&!g.ok){console.error('无法判断 Pages 状态');process.exit(1)}if(g.ok){console.log('Pages 已启用，跳过创建')}else{const c=await fetch(api+'/pages',{method:'POST',headers:jh,body:JSON.stringify({build_type:'workflow'})});console.log('POST /pages ->',c.status);if(!c.ok){console.error(await c.text());process.exit(1)}}const d=await fetch(api+'/actions/workflows/docs.yml/dispatches',{method:'POST',headers:jh,body:JSON.stringify({ref:'main'})});console.log('POST dispatch docs.yml ->',d.status);if(!d.ok){console.error('未能触发 workflow，请手动重跑')}"
+
+main:
+  push:
+    - name: ci-docs
+      runner:
+        tags: cnb:arch:amd64
+      docker:
+        image: node:22
+      stages:
+        - name: install
+          script: set -e; npm install -g pnpm@9 && pnpm install --frozen-lockfile
+        - name: check snapshots
+          script: set -e; pnpm check
+        - name: build site
+          script: set -e; DOCS_REPO_URL=https://github.com/h1s97x/data-docs DOCS_EDIT_LINK=https://github.com/h1s97x/data-docs/edit/main pnpm build
+    - name: sync-to-github
+      imports:
+        - https://cnb.cool/h1s97x/secret-env/-/blob/main/env.yml
+      stages:
+        - name: sync to github (force, CNB is source)
+          image: tencentcom/git-sync
+          settings:
+            <<: *git-sync-settings
+            sync_mode: push
+            force: true
+
+  web_trigger:
+    - <<: *bootstrap-github-pages
