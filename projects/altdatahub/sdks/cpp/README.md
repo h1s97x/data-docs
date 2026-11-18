@@ -42,7 +42,7 @@ Debian/Ubuntu：`apt-get install -y make g++ pkg-config libcurl4-openssl-dev`
 
 ```cpp
 #include "altdatahub.hpp"
-#include <iostream>
+#include [iostream]
 
 int main() {
     try {

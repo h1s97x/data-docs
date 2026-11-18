@@ -54,7 +54,7 @@ import { HubClient, PRODUCT_CODES, type S0101BasicProfile } from '@h1s97x/altdat
 const offline = new HubClient(
   new MappingTransport({ S0101: { data: [{ entType: '有限责任公司' }] } }),
 );
-const rows = await offline.enterpriseBasic<S0101BasicProfile>(PRODUCT_CODES.S0101, {
+const rows = await offline.enterpriseBasic[S0101BasicProfile](PRODUCT_CODES.S0101, {
   entName: '贵州茅台',
 });
 rows[0]?.entType; // '有限责任公司'

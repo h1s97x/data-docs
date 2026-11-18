@@ -31,13 +31,13 @@ Transport transport = new Transport.Mapping(Map.of(
         "S0101", Map.of("data", List.of(Map.of("entType", "有限责任公司")))));
 HubClient offline = new HubClient(transport);
 
-List<Types.S0101BasicProfile> rows = offline.enterpriseBasic(Map.of("entName", "贵州茅台"));
+List[Types.S0101BasicProfile] rows = offline.enterpriseBasic(Map.of("entName", "贵州茅台"));
 rows.get(0).entType(); // "有限责任公司"
 rows.get(0).raw();     // 原始行，分册未覆盖的新字段不会丢
 
 // 真实调用：从 EDS_* 环境变量取网关公共参数
 HubClient client = HubClient.fromEnv();
-List<Types.S0101BasicProfile> live = client.enterpriseBasic(Map.of(
+List[Types.S0101BasicProfile] live = client.enterpriseBasic(Map.of(
         "entName", "贵州茅台",
         "page", "1",
         "pageSize", "20"));

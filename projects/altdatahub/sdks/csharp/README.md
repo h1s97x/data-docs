@@ -25,21 +25,21 @@ using Altdatahub;
 // 离线：把上游响应喂进模型层，不发网络请求
 var offline = new HubClient(new MappingTransport(new Dictionary<string, Dictionary<string, object?>>
 {
-    ["S0101"] = new() { ["data"] = new List<object?> { new Dictionary<string, object?> { ["entType"] = "有限责任公司" } } },
+    ["S0101"] = new() { ["data"] = new List[object?] { new Dictionary<string, object?> { ["entType"] = "有限责任公司" } } },
 }));
 
-var rows = offline.EnterpriseBasic<S0101BasicProfile>("S0101",
+var rows = offline.EnterpriseBasic[S0101BasicProfile]("S0101",
     new Dictionary<string, object?> { ["entName"] = "贵州茅台" });
 Console.WriteLine(rows[0].EntType); // 有限责任公司
 Console.WriteLine(rows[0].Raw);     // 原始行，分册未覆盖的新字段不会丢
 
 // 真实调用：从 EDS_* 环境变量取网关公共参数
 var client = HubClient.FromEnv();
-var live = client.EnterpriseBasic<S0101BasicProfile>("S0101",
+var live = client.EnterpriseBasic[S0101BasicProfile]("S0101",
     new Dictionary<string, object?> { ["entName"] = "贵州茅台", ["page"] = "1" });
 ```
 
-`HubClient` 提供 10 个大类方法与通用入口 `Query<T>(productCode, parameters)`；
+`HubClient` 提供 10 个大类方法与通用入口 `Query[T](productCode, parameters)`；
 泛型参数由调用方标注，类型与 productCode 不匹配时会在取字段处抛 `InvalidCastException`。
 
 ## 公共参数（环境变量）
@@ -73,7 +73,7 @@ var live = client.EnterpriseBasic<S0101BasicProfile>("S0101",
 
 | Python | C# |
 |---|---|
-| `client.enterprise_basic("S0101", entName="x")` | `client.EnterpriseBasic<S0101BasicProfile>("S0101", new Dictionary<string, object?> { ["entName"] = "x" })` |
+| `client.enterprise_basic("S0101", entName="x")` | `client.EnterpriseBasic[S0101BasicProfile]("S0101", new Dictionary<string, object?> { ["entName"] = "x" })` |
 | `client.from_env()` | `HubClient.FromEnv()` |
 | `EdsConfig(...)` 的 `org_id` | `EdsConfig.OrgId`（PascalCase） |
 | `list[Record]` | `IReadOnlyList<T>` |

@@ -50,7 +50,7 @@ python3 service/console_cli.py --env-file .env --mode probe
 
 - **网关探针（默认，替代手写 probe 脚本）**：逐项问答填 4 个必填业务参数（+ 2 个选填），
   从 `.env` 读 7 个 `EDS_*`，连同按 `izxzx<productCode>` 拼出的服务号组成 8 个公共参数，
-  直接 POST 网关，把**原始响应**落盘到 `./probe/probe-<label>-<UTC>.json`（权限 0600），
+  直接 POST 网关，把**原始响应**落盘到 `./probe/probe-[label]-[UTC].json`（权限 0600），
   并打印信封层级摘要。
 - **能力服务**：带 `SERVICE_AUTH_TOKEN` 调 `POST /v1/query/{code}`，看结构化结果与耗时。
 
@@ -75,7 +75,7 @@ curl http://127.0.0.1:8802/v1/ping
 
 # 采集一份真实成功响应
 docker compose -f service/compose.arm64.yml --env-file .env --profile probe \
-  run --rm probe --product-code S0101 --params '{"entName":"<企业名称>","idNum":"<身份标识号码>","idType":"01","queryReason":"01"}' --label success
+  run --rm probe --product-code S0101 --params '{"entName":"[企业名称]","idNum":"[身份标识号码]","idType":"01","queryReason":"01"}' --label success
 
 # 采集一份错误响应（换无效 productCode / 服务号）
 docker compose -f service/compose.arm64.yml --env-file .env --profile probe \
@@ -111,7 +111,7 @@ docker compose -f service/compose.arm64.yml --env-file .env --profile probe \
 ```bash
 docker-compose -f service/compose.arm64.yml up -d
 docker-compose -f service/compose.arm64.yml run --rm probe \
-  --product-code S0101 --params '{"entName":"<企业名称>","idNum":"<身份标识号码>","idType":"01","queryReason":"01"}' --label success
+  --product-code S0101 --params '{"entName":"[企业名称]","idNum":"[身份标识号码]","idType":"01","queryReason":"01"}' --label success
 ```
 
 若 `docker-compose` 仍有 flag 或 schema 限制，绕开 compose 用 `docker run`（`--env-file` 是
@@ -124,10 +124,10 @@ IMG=docker.cnb.cool/h1s97x/whccb/altdatahub/altdatahub-service:0.1.0-arm64
 docker run --rm --env-file /tmp/ah-probe.env \
   -v "$(pwd)/service/probe:/app/probe" \
   --entrypoint python "$IMG" -m service.probe \
-  --product-code S0101 --params '{"entName":"<企业名称>","idNum":"<身份标识号码>","idType":"01","queryReason":"01"}' --label success
+  --product-code S0101 --params '{"entName":"[企业名称]","idNum":"[身份标识号码]","idType":"01","queryReason":"01"}' --label success
 ```
 
-探针把**原始响应体**写到 `service/probe/probe-<label>-<UTC>.json`（权限 0600）：compose 卷
+探针把**原始响应体**写到 `service/probe/probe-[label]-[UTC].json`（权限 0600）：compose 卷
 `./probe` 相对 compose 文件所在的 `service/` 目录，不是仓库根，也不是可执行脚本。同时记录
 请求 URL（主机脱敏为 `<EDS_HOST>`）、请求体（`eds_account` 脱敏）、HTTP 状态与响应原文，
 以及 SDK 当前用 `check_error` / `extract_rows` 得到的解释结果；stdout 只报路径与字节数。

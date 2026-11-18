@@ -71,7 +71,7 @@ printf '%s\n' \
 ```bash
 python service/issue_token.py --caller mcp-gateway \
   --scopes categories,catalog,schema,query --quiet   # 明文只输出一次
-# 写入 .env：ALTDATAHUB_SERVICE_TOKEN=<上面的值>、MCP_AUTH_TOKEN=$(openssl rand -hex 32)
+# 写入 .env：ALTDATAHUB_SERVICE_TOKEN=[上面的值]、MCP_AUTH_TOKEN=$(openssl rand -hex 32)
 
 DUEAGENT_NETWORK=workspace_default \
   docker compose -f mcp/compose.yml --env-file .env up -d --build
@@ -84,7 +84,7 @@ DUEAGENT_NETWORK=workspace_default \
   "mcpServers": {
     "altdatahub": {
       "url": "https://mcp.internal.example/mcp",
-      "headers": { "Authorization": "Bearer <MCP_AUTH_TOKEN>" }
+      "headers": { "Authorization": "Bearer [MCP_AUTH_TOKEN]" }
     }
   }
 }

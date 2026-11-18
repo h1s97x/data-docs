@@ -68,7 +68,7 @@ client.enterprise_basic(PRODUCT_CODES.S0101, entName="贵州茅台", page="1", p
 
 | 环境变量 | 说明 |
 |---|---|
-| `EDS_BASE_URL` | 网关地址（示例里是内网 `http://<host>:9080/edsservice/api/gateway`） |
+| `EDS_BASE_URL` | 网关地址（示例里是内网 `http://[host]:9080/edsservice/api/gateway`） |
 | `EDS_ACCOUNT` | 授权字串（凭据，不传或传错将无法查询） |
 | `EDS_OPERATE_USER_ID` / `EDS_OPERATE_USER_NAME` | 用户编号 / 查询用户名 |
 | `EDS_SCENE` | 来源系统简称（大写英文字母，全行统一） |
@@ -138,7 +138,7 @@ import java.util.List;
 import java.util.Map;
 
 HubClient client = HubClient.fromEnv(); // 或 new HubClient(new Transport.Mapping(...)) 离线跑
-List<Types.S0101BasicProfile> rows = client.enterpriseBasic(Map.of("entName", "贵州茅台"));
+List[Types.S0101BasicProfile] rows = client.enterpriseBasic(Map.of("entName", "贵州茅台"));
 rows.get(0).entType();
 ```
 
@@ -178,7 +178,7 @@ dotnet run --project tests/Altdatahub.Tests -c Release
 using Altdatahub;
 
 var client = HubClient.FromEnv(); // 或 new HubClient(new MappingTransport(...)) 离线跑
-var rows = client.EnterpriseBasic<S0101BasicProfile>("S0101",
+var rows = client.EnterpriseBasic[S0101BasicProfile]("S0101",
     new Dictionary<string, object?> { ["entName"] = "贵州茅台" });
 ```
 
@@ -197,7 +197,7 @@ cd sdks/rust && cargo fmt --check && cargo test
 use altdatahub::{HubClient, S0101BasicProfile};
 
 let client = HubClient::from_env()?;            // 或 HubClient::new(Box::new(MappingTransport::new(..))) 离线跑
-let rows: Vec<S0101BasicProfile> = client.enterprise_basic("S0101", params)?;
+let rows: Vec[S0101BasicProfile] = client.enterprise_basic("S0101", params)?;
 ```
 
 `src/types.rs`（51 个产品 struct + 12 个子结构）同样由 `tools/gen_code.py` 产出，**不许手改**。
@@ -322,14 +322,18 @@ AI 客户端可另起 `mcp/compose.yml`。三者都由 `.ci-service` 进 CI。
 
 | 目标 | 文档 |
 |---|---|
+| 在线文档站 | [Data Docs](https://h1s97x.github.io/data-docs/)（三项目统一站；各主仓 `docs/` 为事实源） |
 | 架构：契约驱动 + 代码生成 | [`docs/architecture.md`](docs/architecture.md) |
 | 产品目录 / 51 个 productCode | [`docs/catalog.md`](docs/catalog.md) · [`catalog/PRODUCTS.md`](catalog/PRODUCTS.md) |
 | REST 传输契约 | [`docs/api/transport.md`](docs/api/transport.md) |
 | 契约驱动生成 | [`catalog/products.json`](catalog/products.json) · [`tools/gen_code.py`](tools/gen_code.py) |
-| 多语言 SDK 矩阵 | 各语言 README（`sdks/<lang>/README.md`） |
+| 多语言 SDK 矩阵 | 各语言 README（`sdks/[lang]/README.md`） |
 | 能力服务 / MCP / Skill | [`service/README.md`](service/README.md) · [`mcp/README.md`](mcp/README.md) · [`skills/altdatahub-service/SKILL.md`](skills/altdatahub-service/SKILL.md) |
 
-文档站（MkDocs Material）在独立仓库，两仓之间只传脱敏后的快照：
+> **2026-11-18 更新**：文档站已统一到 [Data Docs](https://h1s97x.github.io/data-docs/)（`h1s97x/whccb/data-docs`），
+> 下列旧文档仓（`altdatahub-docs`）已归档，仅作历史记录；脱敏快照现在推到 data-docs 的 `projects/altdatahub/`。
+
+文档站（MkDocs Material）原在独立仓库，两仓之间只传脱敏后的快照：
 
 ```bash
 python tools/verify.py all       # 统一门禁：生成物 / 向量 / 链接 / 脱敏 / 快照

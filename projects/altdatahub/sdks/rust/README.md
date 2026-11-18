@@ -31,7 +31,7 @@ use serde_json::{Map, Value};
 let client = HubClient::from_env()?;
 let params: Map<String, Value> =
     serde_json::from_str(r#"{"entName": "贵州茅台", "page": "1"}"#)?;
-let rows: Vec<S0101BasicProfile> = client.enterprise_basic("S0101", params)?;
+let rows: Vec[S0101BasicProfile] = client.enterprise_basic("S0101", params)?;
 
 println!("{:?}", rows[0].ent_type);
 println!("{:?}", rows[0].raw); // 分册未覆盖的新字段不会丢
@@ -49,11 +49,11 @@ responses.insert("S0101".to_string(), serde_json::json!({"data": [{"entType": "�
     .as_object().unwrap().clone());
 
 let client = HubClient::new(Box::new(MappingTransport::new(responses)));
-let rows: Vec<S0101BasicProfile> = client.enterprise_basic("S0101", Default::default())?;
+let rows: Vec[S0101BasicProfile] = client.enterprise_basic("S0101", Default::default())?;
 # Ok::<(), Box<dyn std::error::Error>>(())
 ```
 
-`HubClient` 提供 10 个大类方法与通用入口 `query::<T>(product_code, params)`；
+`HubClient` 提供 10 个大类方法与通用入口 `query::[T](product_code, params)`；
 泛型 `T` 由调用方标注，反序列化失败会变成 `HubError::Response` 而不是 panic。
 
 ## 公共参数（环境变量）
@@ -87,7 +87,7 @@ let rows: Vec<S0101BasicProfile> = client.enterprise_basic("S0101", Default::def
 
 | Python | Rust |
 |---|---|
-| `client.enterprise_basic("S0101", entName="x")` | `client.enterprise_basic::<S0101BasicProfile>("S0101", params)` |
+| `client.enterprise_basic("S0101", entName="x")` | `client.enterprise_basic::[S0101BasicProfile]("S0101", params)` |
 | `client.from_env()` | `HubClient::from_env()` |
 | `EdsConfig(...)` 的 `org_id` | `EdsConfig.org_id`（snake_case） |
 | `list[Record]` | `Vec<T>` |

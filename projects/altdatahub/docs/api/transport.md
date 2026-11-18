@@ -27,7 +27,7 @@
 《接口规范》Java 示例 `EDSSServiceTest`：
 
 ```java
-private static final String SERVICE_URL = "http://<EDS_HOST>:9080/edsservice/api/gateway";
+private static final String SERVICE_URL = "http://[EDS_HOST]:9080/edsservice/api/gateway";
 HttpPost httpPost = new HttpPost(SERVICE_URL);
 httpPost.setHeader("Content-Type", "application/json;charset=utf-8");
 httpPost.setHeader("Accept", "application/json");

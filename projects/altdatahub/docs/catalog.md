@@ -57,7 +57,7 @@ catalog/PRODUCTS.md                     人读速查表
 1. 把新 PDF 放本地（不要入库）；
    首次需要 `pip install -e ".[extract]"`（pdfplumber 只在解析期用）；
    **先留一份旧目录**：`cp catalog/products.json /tmp/products-old.json`；
-2. `python tools/extract_catalog.py <pdf> -o catalog/products.json --check`；
+2. `python tools/extract_catalog.py [pdf] -o catalog/products.json --check`；
 3. `python tools/verify.py diff /tmp/products-old.json` —— 删产品 / 删字段 / 改类型会标红，
    必须人工确认是「分册真的改了」；新增字段只提示不报错；
 4. `python tools/gen_code.py`；

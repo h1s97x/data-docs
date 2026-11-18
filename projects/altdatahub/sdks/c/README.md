@@ -52,7 +52,7 @@ apt-get install -y make gcc pkg-config libcurl4-openssl-dev
 
 ```c
 #include "altdatahub.h"
-#include <stdio.h>
+#include [stdio.h]
 
 int main(void) {
     ad_error *error = NULL;
