@@ -11,7 +11,7 @@ const REQUIRED = ['manifest.json', 'README.md'];
 
 const SECRET_PATTERNS = [
   [/-----BEGIN (RSA |EC |DSA )?PRIVATE KEY-----/, 'PEM 私钥'],
-  [/(?:XYJ|ELECREDIT|EDS)_(?:PRIVATE_KEY|APP_KEY|TOKEN)\s*=\s*[^<\s$"']{8,}/, '凭据环境变量赋值'],
+  [/(?:XYJ|ELECREDIT|EDS)_(?:PRIVATE_KEY|APP_KEY|TOKEN)\s*=\s*(?!\.\.\.|YOUR_|<|REDACTED)[^\s$"'`]{16,}/, '凭据环境变量赋值'],
   [/\b(?:10|172|192)\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/, '内网 IP'],
 ];
 

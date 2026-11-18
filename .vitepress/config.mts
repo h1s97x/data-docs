@@ -20,6 +20,8 @@ export default defineConfig({
   titleTemplate: ':title · 企业风控数据产品族',
   description: 'xyj-api / altdatahub / elecredit 的统一接入文档：多语言 SDK、REST 契约、能力服务与 AI 接入',
   cleanUrls: false,
+  // 快照是选择性白名单，文档里的链接常指向未纳入白名单的源码/测试文件，属预期。
+  ignoreDeadLinks: true,
   lastUpdated: true,
   srcExclude: ['README.md', 'projects/**/manifest.json'],
   head: [['meta', { name: 'theme-color', content: '#0b66ff' }]],
