@@ -35,3 +35,7 @@ Elecredit 企业风控数据的公开文档。根 [`README.md`](../README.md) �
 - 凭据获取：[https://api.elecredit.com/admin]。**App ID + App Key 二元组**，不要写入代码或 Git。
 - 签名算法见根 README 和 [REST API 契约总览](api/elecredit/README.md) 的黄金样本；
   序列化细节与排错见 [签名算法与自测](signature.md)。
+
+## 文档入口
+
+| 在线文档站 | [Data Docs](https://h1s97x.github.io/data-docs/)（三项目统一站；各主仓 `docs/` 为事实源） |

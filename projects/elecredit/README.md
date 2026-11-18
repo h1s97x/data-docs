@@ -97,6 +97,7 @@ curl -X POST https://api.elecredit.com/mohu/wh \
 
 | 目标 | 文档 |
 |---|---|
+| 在线文档站 | [Data Docs](https://h1s97x.github.io/data-docs/)（三项目统一站；各主仓 `docs/` 为事实源） |
 | REST API 契约（10 端点） | [`docs/api/elecredit/README.md`](docs/api/elecredit/README.md) |
 | 架构：契约驱动 + 代码生成 | [`docs/architecture.md`](docs/architecture.md) |
 | 契约驱动生成 | [`contract/sdk.json`](contract/sdk.json) · [`tools/gen_code.py`](tools/gen_code.py) |

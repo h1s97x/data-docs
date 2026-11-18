@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source": "elecredit@f2c95ff",
+  "source": "elecredit@fa9eb69",
   "generatedBy": "tools/export_docs.py",
   "contractVersion": 1,
   "generatorSha256": "9b94d2a4ac677d8f726873b4cd180f4cd09296a80f5e9bd87f8f3006aa510408",
@@ -13,13 +13,13 @@
   "files": [
     {
       "path": "README.md",
-      "sha256": "2ced9e918a210669ae8b2a2b53f900e13bbcbdb4a026aca274e66ade8554c5d9",
-      "bytes": 6593
+      "sha256": "799c796b04cbb18653499ee44c09f350f5ffccc6dea8fba286a082743b80ce7d",
+      "bytes": 6721
     },
     {
       "path": "docs/README.md",
-      "sha256": "cc04696e0d8b83eb582e1931237063d1985d975886d2612dd1c94a92f9e9a4ce",
-      "bytes": 2847
+      "sha256": "ea3e52cf2ad132d0c5c91a4b98833f9e4c7782ac64cb8c257c5cb72d8e2b0182",
+      "bytes": 2993
     },
     {
       "path": "docs/architecture.md",
