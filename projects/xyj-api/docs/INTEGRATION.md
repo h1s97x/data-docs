@@ -9,7 +9,7 @@
 | 需要 | 来源 |
 |---|---|
 | 服务地址 | 部署方提供，如 `http://xyj-service:8804` |
-| 调用方 Token | 部署方用 `python -m service.issue_token issue --caller <你> --scopes <能力>` 签发 |
+| 调用方 Token | 部署方用 `python -m service.issue_token issue --caller [你] --scopes <能力>` 签发 |
 | 契约 | [`../openapi/service.yaml`](../openapi/service.yaml)（可导入 Apifox）或本页表格 |
 
 不要把直连 SDK 的 `XYJ_PRIVATE_KEY` 发给调用方；那是服务端凭据。
@@ -20,7 +20,7 @@
 
 ```bash
 curl -X POST http://xyj-service:8804/v1/query/upstream \
-  -H 'Authorization: Bearer <TOKEN>' -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer [TOKEN]' -H 'Content-Type: application/json' \
   -d '{"company_name":"某企业","nsrsbh":"9133...","data_key":"220_xxx"}'
 ```
 
@@ -28,7 +28,7 @@ curl -X POST http://xyj-service:8804/v1/query/upstream \
 
 ```bash
 export XYJ_SERVICE_URL=http://xyj-service:8804
-export XYJ_SERVICE_TOKEN=<TOKEN>
+export XYJ_SERVICE_TOKEN=[TOKEN]
 python skills/xyj-service/scripts/query.py --capability upstream \
   --param company_name=某企业 --param nsrsbh=9133... --param data_key=220_xxx
 ```

@@ -34,7 +34,7 @@ paths:
             schema:
               $ref: "#/components/schemas/UpstreamRequest"
             example:
-              head: {orgCode: WHYH001, orgName: 某某银行, sign: "<base64>"}
+              head: {orgCode: WHYH001, orgName: 某某银行, sign: "[base64]"}
               body:
                 companyList: [{companyName: 某企业, nsrsbh: "91330000TEST0000XX"}]
                 type: "1"
@@ -51,7 +51,7 @@ paths:
                 code: "200"
                 msg: 操作成功
                 data: [{jyfx: 上游, hxqyName: A, oneName: B}]
-                sign: "<base64>"
+                sign: "[base64]"
                 success: true
   /xyj-api/external/report/applyReport:
     post:
@@ -83,7 +83,7 @@ paths:
             schema:
               $ref: "#/components/schemas/ReportQueryRequest"
             example:
-              head: {orgCode: WHYH001, orgName: 某某银行, sign: "<base64>"}
+              head: {orgCode: WHYH001, orgName: 某某银行, sign: "[base64]"}
               body: {taskNo: "T-123", params: "{\"queryJson\": true}"}
       responses:
         "200":

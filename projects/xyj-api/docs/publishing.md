@@ -29,17 +29,17 @@
 cd sdks/typescript
 npm version patch            # 或 minor / major
 cd ../..
-git add -A && git commit -m "chore(release): cli-v<version>"
+git add -A && git commit -m "chore(release): cli-v[version]"
 git push origin main
-git tag cli-v<version> && git push origin cli-v<version>
+git tag cli-v[version] && git push origin cli-v[version]
 
 # Python SDK（sdk-v）：先同步改两处版本号
 #   - sdks/python/pyproject.toml → version
 #   - sdks/python/xyj_api/_version.py → __version__
 cd sdks/python && python -m pytest tests/ -q && python -m build && cd ../..
-git add -A && git commit -m "chore(release): sdk-v<version>"
+git add -A && git commit -m "chore(release): sdk-v[version]"
 git push origin main
-git tag sdk-v<version> && git push origin sdk-v<version>
+git tag sdk-v[version] && git push origin sdk-v[version]
 ```
 
 ## 手动发布（不推 tag）
@@ -54,7 +54,7 @@ npm config set @h1s97x:registry https://npm.cnb.cool/h1s97x/npm/-/packages/
 npm install @h1s97x/xyj-api
 
 # CNB PyPI
-pip config set global.index-url https://cnb:<令牌>@pypi.cnb.cool/h1s97x/pypi/-/packages/simple
+pip config set global.index-url https://cnb:[令牌]@pypi.cnb.cool/h1s97x/pypi/-/packages/simple
 pip install xyj-api
 ```
 

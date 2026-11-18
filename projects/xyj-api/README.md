@@ -21,7 +21,7 @@
 ### 直连 SDK（Python）
 
 ```bash
-pip config set global.index-url https://cnb:<你的CNB访问令牌>@pypi.cnb.cool/h1s97x/pypi/-/packages/simple
+pip config set global.index-url https://cnb:[你的CNB访问令牌]@pypi.cnb.cool/h1s97x/pypi/-/packages/simple
 pip install xyj-api
 ```
 
@@ -44,7 +44,7 @@ cp .env.example .env
 python -m service.issue_token issue --caller app-a --scopes '*' --days 30
 python -m service           # 默认 127.0.0.1:8804
 curl -X POST http://127.0.0.1:8804/v1/query/upstream \
-  -H 'Authorization: Bearer <TOKEN>' -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer [TOKEN]' -H 'Content-Type: application/json' \
   -d '{"company_name":"某企业","nsrsbh":"9133...","data_key":"220_xxx"}'
 ```
 

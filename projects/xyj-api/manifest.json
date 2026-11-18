@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source": "xyj-api@e4807a6",
+  "source": "xyj-api@5f5da0c",
   "generatedBy": "tools/export_docs.py",
   "contractVersion": 1,
   "generatorSha256": "cb504a7ad95718ad3cbbddd3be0f575d42b815dad8c77872274fbbb34cc18fd8",
@@ -13,27 +13,27 @@
   "files": [
     {
       "path": "README.md",
-      "sha256": "89276953da252aa243947fc2059b9b6a35ba4cd69d81db416b894e9743900403",
+      "sha256": "ee279420f9517937d464d5fa902de756283cc6a3bb22f22ebb00e05231be064b",
       "bytes": 5729
     },
     {
       "path": "docs/architecture.md",
-      "sha256": "45519bf2ae612779251e9c1ad524be1df4bf2632cb234fe0f5fbc8d710f4371b",
+      "sha256": "eb0da03b2172798708f39d92be50afa30cc012582ed0713adc0e8756263581ce",
       "bytes": 2843
     },
     {
       "path": "docs/INTEGRATION.md",
-      "sha256": "4882585965b067d3381a07fc4ce84c0421d05d68e3a445fc7e64597625ae660b",
+      "sha256": "ac7bf66ada112ca7cc0ac890db67dbbb378839aec260bd672bdb3ef434e1f25c",
       "bytes": 3348
     },
     {
       "path": "docs/protocol.md",
-      "sha256": "b401b9072ae5b8be4eec8c69db6a669af7c7eeaedefb7b464eb17c23457aceec",
+      "sha256": "f8acf0dae22572e5650781ba266caf17ee7dc6235f5e14b8d45fcc809772691e",
       "bytes": 5700
     },
     {
       "path": "docs/publishing.md",
-      "sha256": "6fa4357f07fabe21cf1ef815b8d28577f53c7ad38b2eda695d7ff400fa96b680",
+      "sha256": "68b0d8ec17de83a735fcdb8e698319c2ff1704ff0833b525bbb5ec4080ee3675",
       "bytes": 3522
     },
     {
@@ -63,7 +63,7 @@
     },
     {
       "path": "openapi/openapi.yaml",
-      "sha256": "f44091939c8130709473899a09fe9120a6ab98390b42eab96da446dd31e37d7e",
+      "sha256": "2e2c5d51aab3b560f5fdc65098842a7cd0d1dadacd72ef3471615f2863e4d03c",
       "bytes": 5614
     },
     {
@@ -78,7 +78,7 @@
     },
     {
       "path": "contract/sdk.json",
-      "sha256": "bbbf2fd2bbe977f314597df3b7832e8110d43d73c3928553b6b525a0c4f58642",
+      "sha256": "6f72762060ad1e31e10901b12bdba00a0f7f04f9acab217bf74f08719f94fc76",
       "bytes": 4614
     },
     {
@@ -98,12 +98,12 @@
     },
     {
       "path": "sdks/python/README.md",
-      "sha256": "add00022f9c528a484db2ff257058bb9c663bd214dec93757e7b459f824bb0c7",
+      "sha256": "33bb5dae02cf88b5d35abeba81f28ade17ff359e95c78c1ee59b023bef91d3e4",
       "bytes": 5649
     },
     {
       "path": "service/README.md",
-      "sha256": "fdaa43fd22a3449113f52e4ff3f7d6af410aea84216a37247e815029129696a9",
+      "sha256": "efc72e83ae8c5758071df88f3cc7ed783080161e6f92025f6b91001c7cb3148b",
       "bytes": 3979
     },
     {
@@ -113,7 +113,7 @@
     },
     {
       "path": "skills/xyj-service/SKILL.md",
-      "sha256": "8aa9c3e758d4701778b2f248ccbf94402722368e6d8417300a1c128272a4bc6c",
+      "sha256": "6ad95dbd12e76900dc2e86a83f95f968f0c68b420731a6512d086bdc00b556f8",
       "bytes": 4121
     }
   ]

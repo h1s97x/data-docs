@@ -28,7 +28,7 @@ description: 查询企业发票上下游流水与报告。当用户需要查企�
 ## 阶段 0：配置检查（先做）
 
 ```bash
-echo "URL=${XYJ_SERVICE_URL:-<unset>} TOKEN=${XYJ_SERVICE_TOKEN:+set}"
+echo "URL=${XYJ_SERVICE_URL:-[unset]} TOKEN=${XYJ_SERVICE_TOKEN:+set}"
 ```
 
 若任一未设置，停止并告知用户需要先部署 `service/` 并签发调用方 Token；不要尝试直连网关。

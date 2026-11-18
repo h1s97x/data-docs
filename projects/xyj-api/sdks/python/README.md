@@ -12,7 +12,7 @@
 ## 安装
 
 ```bash
-pip config set global.index-url https://cnb:<你的CNB访问令牌>@pypi.cnb.cool/h1s97x/pypi/-/packages/simple
+pip config set global.index-url https://cnb:[你的CNB访问令牌]@pypi.cnb.cool/h1s97x/pypi/-/packages/simple
 pip install xyj-api
 ```
 

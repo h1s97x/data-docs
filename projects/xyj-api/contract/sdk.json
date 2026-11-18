@@ -10,7 +10,7 @@
       "java": {"string": "String"},
       "go": {"string": "*string"},
       "csharp": {"string": "string?"},
-      "rust": {"string": "Option<String>"},
+      "rust": {"string": "Option[String]"},
       "c": {"string": "const char *"}
     },
     "modelKeys": ["cnName", "description", "fields"],

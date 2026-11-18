@@ -60,7 +60,7 @@ python -m service.issue_token revoke <sha256 前缀>
 
 ```bash
 curl -X POST http://127.0.0.1:8804/v1/query/upstream \
-  -H 'Authorization: Bearer <TOKEN>' -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer [TOKEN]' -H 'Content-Type: application/json' \
   -d '{"company_name":"某企业","nsrsbh":"9133...","data_key":"220_xxx"}'
 ```
 

@@ -55,7 +55,7 @@ canonical = companyList=[companyName=测试企业有限公司&nsrsbh=91330000TES
 真实响应还带一个 `sign` 字段：
 
 ```json
-{"code": 200, "msg": "操作成功", "data": [], "datas": {}, "sign": "<Base64>",
+{"code": 200, "msg": "操作成功", "data": [], "datas": {}, "sign": "[Base64]",
  "timestamp": 1790747402129, "success": true}
 ```
 
@@ -96,7 +96,7 @@ sign = SHA1withRSA(canonicalize_value(data), 消费方自己的私钥)
 请求 `body`：
 
 ```json
-{"companyList": [{"companyName": "……", "nsrsbh": "……"}], "type": "1", "key": "<数据key>", "params": ""}
+{"companyList": [{"companyName": "……", "nsrsbh": "……"}], "type": "1", "key": "[数据key]", "params": ""}
 ```
 
 - `type`：`"1"` 裂变模式（默认）/ `"2"` 标签模式。
@@ -107,7 +107,7 @@ sign = SHA1withRSA(canonicalize_value(data), 消费方自己的私钥)
 ### 4.2 报告申请
 
 ```json
-{"key": "<报告产品key>", "nsrmc": "……", "nsrsbh": "……"}
+{"key": "[报告产品key]", "nsrmc": "……", "nsrsbh": "……"}
 ```
 
 成功时 `data.taskNo` 为后续查询用的任务号，用 `extract_task_no()` 取。
