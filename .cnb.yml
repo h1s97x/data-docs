@@ -62,5 +62,6 @@ main:
             sync_mode: push
             force: true
 
-  web_trigger:
+  # 首次建 Pages 用 api_trigger（CNB API 可直接触发，免去页面手动点击）
+  'api_trigger:bootstrap-pages':
     - <<: *bootstrap-github-pages
