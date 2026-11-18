@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "source": "xyj-api@5f5da0c",
+  "source": "xyj-api@ff32bc1",
   "generatedBy": "tools/export_docs.py",
   "contractVersion": 1,
   "generatorSha256": "cb504a7ad95718ad3cbbddd3be0f575d42b815dad8c77872274fbbb34cc18fd8",
   "vectorsVersion": 1,
   "redactions": [
     "\\b(?:10|172|192)\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b",
-    "(?:XYJ|EDS)_(?:PRIVATE_KEY|APP_KEY|TOKEN)\\s*=\\s*[^<\\s$'\\\"\\n]{8,}",
+    "(?:XYJ|EDS)_(?:PRIVATE_KEY|APP_KEY|TOKEN)\\s*=\\s*(?!\\.\\.\\.|YOUR_|<|REDACTED)[^\\s$\\'\\\"\\n]{16,}",
     "-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----[\\s\\S]*?-----END (?:RSA |EC |DSA )?PRIVATE KEY-----"
   ],
   "files": [
