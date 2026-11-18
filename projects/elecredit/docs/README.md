@@ -32,6 +32,6 @@ Elecredit 企业风控数据的公开文档。根 [`README.md`](../README.md) �
 - 不再维护独立 `elecredit-docs` 仓库或 VitePress 站点；历史提案的结论与未完成项已并入
   [`docs/wiki/08-known-issues.md`](wiki/08-known-issues.md)。
 - Python SDK 和 CLI 文档只说明运行方式，不复制 REST 响应字段——直接链接 `docs/api/elecredit/`。
-- 凭据获取：<https://api.elecredit.com/admin>。**App ID + App Key 二元组**，不要写入代码或 Git。
+- 凭据获取：[https://api.elecredit.com/admin]。**App ID + App Key 二元组**，不要写入代码或 Git。
 - 签名算法见根 README 和 [REST API 契约总览](api/elecredit/README.md) 的黄金样本；
   序列化细节与排错见 [签名算法与自测](signature.md)。

@@ -57,7 +57,7 @@ from elecredit import ElecreditClient
 
 public = ElecreditClient.from_env()                     # 公网默认
 internal = ElecreditClient(app_id="...", app_key="...",
-                           base_url="http://<内部网关>/...")  # 内网
+                           base_url="http://[内部网关]/...")  # 内网
 ```
 
 内网只换 host：签名 `sn + ts + body + appKey` 与紧凑中文 JSON 逐字节不变，
@@ -69,7 +69,7 @@ internal = ElecreditClient(app_id="...", app_key="...",
 | 端口 | 对应物 |
 |------|--------|
 | Python SDK | `ENDPOINTS` 10 项（`Endpoint` NamedTuple，含产品码）+ `ElecreditClient` 10 个便捷方法 + `elecredit-py <cmd>` 10 个子命令 |
-| Node CLI | `remoteCapabilities` 10 个描述符 → `elecredit-py <group> <name>` 10 个子命令 |
+| Node CLI | `remoteCapabilities` 10 个描述符 → `elecredit-py [group] <name>` 10 个子命令 |
 | REST 契约 | `docs/api/elecredit/` 10 篇端点文档 |
 
 三处由 `sdks/typescript/tests/endpoint-contract-consistency.test.ts` 交叉校验（id、路径、文档三向对齐），
@@ -90,7 +90,7 @@ client.post("/enterprise/biddingYPageWh", {"entInfo": "贵州茅台"})     # B04
 
 ### 产品码解包（`product_payload`）
 
-上游把业务体再包一层：`resultData = {"<产品码>Status": ..., "<产品码>Data": {...}}`，
+上游把业务体再包一层：`resultData = {"[产品码]Status": ..., "[产品码]Data": {...}}`，
 产品码各端点不同（完整对照见 `ENDPOINTS[key].product_code` 与
 [docs/api/elecredit/README.md](../../docs/api/elecredit/README.md)）。
 
@@ -204,10 +204,10 @@ signature = MD5(signStr).hex()
 
 # 签名放 HTTP Header（不是 body）
 Content-Type: application/json
-app-id:        <appId>
-timestamp:     <ts>
-request-sn:    <sn>
-signature:     <md5_hex>
+app-id:        [appId]
+timestamp:     [ts]
+request-sn:    [sn]
+signature:     [md5_hex]
 sign-type:     MD5
 ```
 

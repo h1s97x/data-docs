@@ -11,7 +11,7 @@
    sdks/typescript/src                           sdks/python/elecredit
         │                                           │
         │  ┌────────────── 共同契约 ──────────────┐  │
-        └──┤ POST https://api.elecredit.com<path> │──┘
+        └──┤ POST https://api.elecredit.com[path] │──┘
            │ Header 签名: MD5(sn+ts+body+appKey)  │
            │ body: 紧凑 JSON，中文不转义           │
            └────────────────┬────────────────────┘
@@ -117,7 +117,7 @@
       ├─ queryFor()：opts → body（过滤空值；integer 转字符串；queryName 改名）
       └─ capability.inputSchema.safeParse(body)  → 失败抛 validation 错误(exit 2)
       │
-6. ElecreditClient.request<T>({ path, body, schema, timeoutMs })
+6. ElecreditClient.request[T]({ path, body, schema, timeoutMs })
       │
 7. for attempt in 0..maxAttempts-1:
       ├─ attempt>0 → sleep(retryDelayMs(attempt, random))

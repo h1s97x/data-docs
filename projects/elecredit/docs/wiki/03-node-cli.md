@@ -60,7 +60,7 @@ sdks/typescript/
 ### `buildProgram(): Command` — `cli/program.ts`
 
 ```ts
-program.name('elecredit').version('0.1.0').option('--format <format>', '输出格式', 'json');
+program.name('elecredit').version('0.1.0').option('--format [format]', '输出格式', 'json');
 registerCapabilitiesCommand(program);
 const config = resolveConfig();
 // 惰性 client：只有真正发请求时才校验凭据
@@ -87,7 +87,7 @@ registerAllCapabilities(program, remoteCapabilities, { getClient });
 
 ```ts
 export interface RegisterContext {
-  getClient: () => Promise<ElecreditClient>;   // 惰性认证工厂
+  getClient: () => Promise[ElecreditClient];   // 惰性认证工厂
 }
 ```
 
@@ -100,7 +100,7 @@ CLI 选项 → API body 的映射：
 3. 字段名优先用 `opt.queryName`，否则用驼峰键。
 4. `type === 'integer'` 的值 `String(raw)`。
 
-### `executeRemoteQuery<T>(client, capability, input): Promise<ElecreditSuccess<T>>`
+### `executeRemoteQuery[T](client, capability, input): Promise<ElecreditSuccess[T]>`
 
 `queryFor` → `inputSchema.safeParse` → `client.request({path, body, schema, timeoutMs})`。校验失败抛 `CliError{code:'ELECREDIT_VALIDATION', category:'validation', exitCode:2}`（message 为聚合后的 `path: message; …`）。**应用层认识错误契约**，边界处不再靠调用方猜兜底退出码。
 
@@ -119,7 +119,7 @@ new ElecreditClient({
 createElecreditClient(opts)   // 工厂函数
 ```
 
-**`request<T>(req, signType='MD5'): Promise<ElecreditSuccess<T>>`**
+**`request[T](req, signType='MD5'): Promise<ElecreditSuccess[T]>`**
 
 | 参数 | 类型 | 说明 |
 |------|------|------|
@@ -128,7 +128,7 @@ createElecreditClient(opts)   // 工厂函数
 | `req.schema` | `ZodType<T>` | 用于校验 `resultData` |
 | `req.timeoutMs` | `number?` | 覆盖默认（F09 传 60000） |
 
-返回 `ElecreditSuccess<T> = { data, bizCode, orderNo?, resultCode? }`。
+返回 `ElecreditSuccess[T] = { data, bizCode, orderNo?, resultCode? }`。
 
 **私有 `classifyError(env)`** —— 分类/退出码/可重试**查表**，文案另有覆盖表：
 
@@ -235,7 +235,7 @@ interface RemoteCapabilityDescriptor {
   description: string;
   endpoint: string; method: 'POST';
   inputSchema: ZodType<Record<string, unknown>>;
-  outputSchema: ZodType<unknown>;   // 当前均为 z.object({}).passthrough().catch({})
+  outputSchema: ZodType[unknown];   // 当前均为 z.object({}).passthrough().catch({})
   options: readonly RemoteOptionDescriptor[];
   paging: 'none' | 'offset' | 'page';
   window: 'none';

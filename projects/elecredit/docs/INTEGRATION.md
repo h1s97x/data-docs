@@ -13,7 +13,7 @@
 
 | 项 | 来源 | 说明 |
 |---|---|---|
-| 服务地址 | 运维提供 | 形如 `http://<HOST>:8081`；写进环境变量，不要硬编码 |
+| 服务地址 | 运维提供 | 形如 `http://[HOST]:8081`；写进环境变量，不要硬编码 |
 | 调用方 Token | 服务侧签发（见下） | 每个调用方独立，注册表只存哈希，明文只出现一次 |
 | 契约 | [`openapi/service.yaml`](../openapi/service.yaml) | OpenAPI 3.1，Apifox 可直接导入 |
 
@@ -48,7 +48,7 @@ python service/issue_token.py --revoke team-xxx   # 单独吊销
 仓库自带零依赖脚本，凭据只从环境变量读（不进命令行参数与进程列表）：
 
 ```bash
-export ELECREDIT_SERVICE_URL=http://<HOST>:8081
+export ELECREDIT_SERVICE_URL=http://[HOST]:8081
 export ELECREDIT_SERVICE_TOKEN=<你的 Token>
 
 python skills/elecredit-service/scripts/query.py \
@@ -111,7 +111,7 @@ python skills/elecredit-service/scripts/query.py \
   调用方网段不在其中会被拒，需让运维把网段加入白名单，或在前面挂反向代理做 mTLS。
 - **限流 `SERVICE_RATE_LIMIT_PER_MIN`**（默认 120，按能力 60 秒滑动窗口）。
 - **最小权限**：Token 的 `scopes` 只给需要的能力，设 `expires`；泄露时用 `--revoke` 单独吊销。
-- **自检**：`python service/check_deploy.py --url http://<HOST>:8081`
+- **自检**：`python service/check_deploy.py --url http://[HOST]:8081`
   （Token 从环境变量读，不打印）。鉴权链路应为「无 Token 401 / 有 Token 200」。
 
 ## 6. 契约维护

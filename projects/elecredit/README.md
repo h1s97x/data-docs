@@ -4,7 +4,7 @@
 司法（12 种 type）、限消人员、企业股权图谱、招投标、实控人。
 
 - **网关**：`https://api.elecredit.com`（POST + JSON body）
-- **认证**：HTTP Header 签名 `MD5(sn + ts + body + appKey)`，凭据 App ID + App Key 从 <https://api.elecredit.com/admin> 获取
+- **认证**：HTTP Header 签名 `MD5(sn + ts + body + appKey)`，凭据 App ID + App Key 从 [https://api.elecredit.com/admin] 获取
 - **架构**：契约驱动 + 代码生成（`contract/sdk.json` → `tools/gen_code.py` → 7 语言产物），CI `--check` 门禁
 
 > **要调用已部署的「elecredit 能力服务」**（只需一个调用方 Token）请看
@@ -48,9 +48,9 @@ node dist/cli/main.js enterprise fuzzy --ent-name 贵州茅台
 
 # 2d. REST 直接调（任何语言）
 curl -X POST https://api.elecredit.com/mohu/wh \
-  -H 'Content-Type: application/json' -H 'app-id: <appId>' \
-  -H 'timestamp: <ts_ms>' -H 'request-sn: <sn>' \
-  -H 'signature: <md5_hex>' -H 'sign-type: MD5' -d '{"entName":"贵州茅台"}'
+  -H 'Content-Type: application/json' -H 'app-id: [appId]' \
+  -H 'timestamp: [ts_ms]' -H 'request-sn: [sn]' \
+  -H 'signature: [md5_hex]' -H 'sign-type: MD5' -d '{"entName":"贵州茅台"}'
 ```
 
 ## 10 端点速查

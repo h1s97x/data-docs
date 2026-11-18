@@ -24,19 +24,19 @@
 | 响应信封 | `{code, msg, orderNo, resultCode, resultData}` |
 | 时区 | 时间戳按 `Asia/Shanghai` 解释 |
 
-获取凭据：<https://api.elecredit.com/admin>（App ID + App Key，不是单一 API Key）。
+获取凭据：[https://api.elecredit.com/admin]（App ID + App Key，不是单一 API Key）。
 
 ## 签名黄金样本（生产环境已验证）
 
 > 凭据用占位符表示，真实 App ID + App Key 不要写入文档或代码。
 
 ```
-appId  = <yourAppId>
-appKey = <yourAppKey>
+appId  = [yourAppId]
+appKey = [yourAppKey]
 body   = {"entName":"贵州茅台"}
 
 sn       = a7ecea084efb42e2a24adc596a40950e   # 32 位随机（示例值）
-ts       = <毫秒时间戳>
+ts       = [毫秒时间戳]
 signStr  = sn + ts + body + appKey              # 字符串拼接
 signature= MD5(signStr).hex()
 
@@ -48,10 +48,10 @@ signature= MD5(signStr).hex()
 ```bash
 curl -X POST 'https://api.elecredit.com/mohu/wh' \
   -H 'Content-Type: application/json' \
-  -H 'app-id:        <appId>' \
-  -H 'timestamp:     <ts_ms>' \
-  -H 'request-sn:    <sn>' \
-  -H 'signature:     <md5_hex>' \
+  -H 'app-id:        [appId]' \
+  -H 'timestamp:     [ts_ms]' \
+  -H 'request-sn:    [sn]' \
+  -H 'signature:     [md5_hex]' \
   -H 'sign-type:     MD5' \
   -d '{"entName":"贵州茅台"}'
 ```
@@ -69,7 +69,7 @@ sig = hashlib.md5(sign_str.encode("utf-8")).hexdigest()
 
 ## resultData 包裹结构（产品码对照）
 
-上游把业务数据再包一层：`resultData` = `{ <产品码>Status, <产品码>Data }`，各端点产品码不同。
+上游把业务数据再包一层：`resultData` = `{ [产品码]Status, [产品码]Data }`，各端点产品码不同。
 **取内层业务体**：Python 用 `elecredit.product_payload(result_data)`（不传码则按结构探测，上游换码也不失效）；
 其它语言按 `resultData[f"{product_code}Data"]` 自行取。
 
@@ -123,7 +123,7 @@ sig = hashlib.md5(sign_str.encode("utf-8")).hexdigest()
 ## 端点列表
 
 > **两套 CLI 同名，注意区分**。下表「CLI 命令」列列的是 **Node CLI** 的全称形式
-> （`elecredit-ts <group> <name>`，如 `elecredit-ts enterprise fuzzy --ent-name …`）。
+> （`elecredit-ts [group] <name>`，如 `elecredit-ts enterprise fuzzy --ent-name …`）。
 > Python SDK 自带的 CLI 入口**也叫 `elecredit`**，但子命令是**扁平**的
 > （`elecredit-py fuzzy --ent-name …`）。各端点页的示例可能用其中任一种，两者都能跑。
 

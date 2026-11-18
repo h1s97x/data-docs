@@ -6,7 +6,7 @@
 |--------|------|
 | Node.js CLI | Node **≥ 22.12.0**（CI 验证 22 / 24），npm |
 | Python SDK | Python **≥ 3.10** |
-| 通用 | `ELECREDIT_APP_ID` + `ELECREDIT_APP_KEY`（从 <https://api.elecredit.com/admin> 获取） |
+| 通用 | `ELECREDIT_APP_ID` + `ELECREDIT_APP_KEY`（从 [https://api.elecredit.com/admin] 获取） |
 
 ## 7.2 Node.js CLI
 
@@ -48,8 +48,8 @@ tag 命名、版本校验、私有制品库与消费方 `.npmrc`、同步配置�
 ### 运行
 
 ```bash
-export ELECREDIT_APP_ID=<app-id>
-export ELECREDIT_APP_KEY=<app-key>
+export ELECREDIT_APP_ID=[app-id]
+export ELECREDIT_APP_KEY=[app-key]
 
 # 凭据（二选一）
 elecredit-ts auth login --app-id <App ID> --app-key <App Key>   # 写入系统钥匙环
@@ -122,7 +122,7 @@ elecredit-py xgbzxr --pers-name 许家印 --id-no 110101195804261234
 python -m elecredit fuzzy --ent-name 贵州茅台
 ```
 
-`--output/-o` 会把 `{"ok": true, "data": …}` 写入文件并打印「已写入 <path>」——**大结果（尤其 F09）必须用这个**。
+`--output/-o` 会把 `{"ok": true, "data": …}` 写入文件并打印「已写入 [path]」——**大结果（尤其 F09）必须用这个**。
 
 ### 测试
 
@@ -141,10 +141,10 @@ ELECREDIT_APP_ID=... ELECREDIT_APP_KEY=... pytest -m integration -v -s
 ```bash
 curl -X POST 'https://api.elecredit.com/mohu/wh' \
   -H 'Content-Type: application/json' \
-  -H 'app-id: <appId>' \
-  -H 'timestamp: <ts_ms>' \
-  -H 'request-sn: <32位随机>' \
-  -H 'signature: <md5_hex>' \
+  -H 'app-id: YOUR_APP_ID' \
+  -H 'timestamp: YOUR_TS_MS' \
+  -H 'request-sn: YOUR_RANDOM_SN' \
+  -H 'signature: YOUR_MD5_HEX' \
   -H 'sign-type: MD5' \
   -d '{"entName":"贵州茅台"}'
 ```
@@ -188,7 +188,7 @@ sig = hashlib.md5((sn + ts + body + APP_KEY).encode("utf-8")).hexdigest()
 **Python SDK**：
 
 1. `endpoints.py` 的 `ENDPOINTS` 增项。
-2. `client.py` 增加便捷方法（或直接用 `client.query("<key>", **body)`）。
+2. `client.py` 增加便捷方法（或直接用 `client.query("[key]", **body)`）。
 3. `cli.py` 增加 Typer 命令。
 4. `tests/test_endpoints.py` 的期望键集合同步更新（当前硬编码 8 个键、断言 `len == 8`）。
 

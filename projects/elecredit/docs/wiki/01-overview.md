@@ -89,7 +89,7 @@ Elecredit 仓库是**企业风控数据服务的多语言接入层（client-side
 ### 凭据
 
 - 形态：**App ID + App Key 二元组**（不是单一 API Key）。
-- 获取：<https://api.elecredit.com/admin>
+- 获取：[https://api.elecredit.com/admin]
 - 探测（Python）：
   1. 显式传参 `ElecreditClient(app_id=..., app_key=...)`
   2. 环境变量 `ELECREDIT_APP_ID` + `ELECREDIT_APP_KEY`
@@ -111,10 +111,10 @@ signature = hashlib.md5(signStr.encode("utf-8")).hexdigest()        # 小写 32 
 
 ```
 Content-Type: application/json
-app-id:        <appId>
-timestamp:     <ts_ms>
-request-sn:    <sn>
-signature:     <md5_hex>
+app-id:        [appId]
+timestamp:     [ts_ms]
+request-sn:    [sn]
+signature:     [md5_hex]
 sign-type:     MD5
 ```
 

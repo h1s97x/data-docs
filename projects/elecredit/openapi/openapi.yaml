@@ -396,7 +396,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "app-key",
-        "description": "App Key（密钥，用于计算签名，**不会作为 Header 发送**）。\n\n签名算法：\n```\nsn       = uuid.hex()                    # 32 位随机\nts       = str(int(time.time() * 1000)) # 毫秒时间戳\nbody     = json.dumps(obj, ensure_ascii=False, separators=(',', ':'))\nsignStr  = sn + ts + body + appKey\nsignature= MD5(signStr).hex()           # 小写 32 位\n```\n\n最终发送 5 个 Header：\n- `app-id`:        <App ID>\n- `timestamp`:     <毫秒时间戳>\n- `request-sn`:    <32 位 UUID>\n- `signature`:     <MD5 小写 hex>\n- `sign-type`:     MD5"
+        "description": "App Key（密钥，用于计算签名，**不会作为 Header 发送**）。\n\n签名算法：\n```\nsn       = uuid.hex()                    # 32 位随机\nts       = str(int(time.time() * 1000)) # 毫秒时间戳\nbody     = json.dumps(obj, ensure_ascii=False, separators=(',', ':'))\nsignStr  = sn + ts + body + appKey\nsignature= MD5(signStr).hex()           # 小写 32 位\n```\n\n最终发送 5 个 Header：\n- `app-id`:        <App ID>\n- `timestamp`:     [毫秒时间戳]\n- `request-sn`:    <32 位 UUID>\n- `signature`:     <MD5 小写 hex>\n- `sign-type`:     MD5"
       }
     },
 

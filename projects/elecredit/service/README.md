@@ -14,7 +14,7 @@ SDK 是库 + 一次性 CLI，自己不会监听端口；本服务是那个"一�
 
 ```
 DueAgent backend（内网，零服务商代码）
-   └─ HTTP /v1/query/<capability> ──Bearer──▶  elecredit-service（唯一出网节点）
+   └─ HTTP /v1/query/[capability] ──Bearer──▶  elecredit-service（唯一出网节点）
                                                   ├─ ELECREDIT_APP_ID / APP_KEY
                                                   ├─ SDK 签名 + 10 原生端点
                                                   └─ api.elecredit.com
@@ -56,7 +56,7 @@ gateway 模式要收窄响应解包器时，在**内网 aarch64 机器**上叠�
 
 脚本会校验 `.env`、在缺少注册表时签发测试台 Token（写入 `.local-ui-token`）、
 按需创建 `DUEAGENT_NETWORK` Docker 网络、启动 compose 并等待 `/v1/ping`。
-浏览器打开 `http://<内网机器IP>:8800/ui`（本机也可 `http://127.0.0.1:8800/ui`）：填调用方
+浏览器打开 `http://[内网机器IP]:8800/ui`（本机也可 `http://127.0.0.1:8800/ui`）：填调用方
 Token、企业名，点「查询能力」看结构化结果，点「查看信封结构（脱敏）」拿字段名 / 类型 / 长度。
 **调试层监听 `0.0.0.0:8800`，只应在内网使用，用完删除容器**；调试端点只回结构，不回任何值，
 且由 `ELECREDIT_GATEWAY_DEBUG=1` 开启；生产不要叠加 debug 层。把脱敏结构截图回传即可收窄
@@ -73,7 +73,7 @@ Token、企业名，点「查询能力」看结构化结果，点「查看信封
 
 gateway 模式所需变量见仓库根 `.env.example`（`ELECREDIT_GATEWAY_*`）；`ELECREDIT_BASE_URL`
 在该模式下必须显式指向内网网关。响应形状已按内网实测收敛：同时处理
-`data[].<产品码>Data`、`data[].resultData.<产品码>Data` 与 `data[].data` 三类主体壳，
+`data[].[产品码]Data`、`data[].resultData.[产品码]Data` 与 `data[].data` 三类主体壳，
 单主体返回业务字典、多主体返回数组。
 
 ## 对外契约（能力级，网关门户共 11 个接口）
@@ -216,7 +216,7 @@ DUEAGENT_NETWORK=workspace_default \
 
 **凭据轮换**（App ID/Key 出现在对话、日志或共享文档里时必做）：
 
-1. 到 <https://api.elecredit.com/admin> 生成新 App Key
+1. 到 [https://api.elecredit.com/admin] 生成新 App Key
 2. 更新 `elecredit/.env` 的 `ELECREDIT_APP_ID` / `ELECREDIT_APP_KEY`
 3. `docker compose -f service/compose.internal.yml --env-file .env up -d --force-recreate`
 4. 跑下面的自检 + 一次 `/v1/normalize` 确认仍返回全称

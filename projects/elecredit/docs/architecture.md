@@ -11,7 +11,7 @@ contract/capabilities.json ← 能力注册表（service / MCP / Skill）
 tools/gen_code.py          ← 校验契约 → 渲染 11 份产物 → 生成 manifest
         │
         ▼
-sdks/<lang>/                7 种语言 SDK（生成端点/错误/枚举 + 手写协议逻辑）
+sdks/[lang]/                7 种语言 SDK（生成端点/错误/枚举 + 手写协议逻辑）
 service/ mcp/ skills/       能力服务 / AI 接入 / Agent Skill
 ```
 

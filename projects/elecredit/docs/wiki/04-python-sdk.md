@@ -185,7 +185,7 @@ extract_result_data(envelope) -> Any      # envelope["resultData"]（外层，�
 classify_error(code, msg, raw=None, *, http_status=None) -> ElecreditError
 
 # 产品码解包（纯新增，不改上面任何函数的行为）
-detect_product_code(payload) -> str | None        # 探测 "<产品码>Data" 里的码，如 "P0030089"
+detect_product_code(payload) -> str | None        # 探测 "[产品码]Data" 里的码，如 "P0030089"
 product_payload(payload, code=None) -> dict       # 取内层业务体；未命中 {}，永不抛
 ```
 
@@ -259,7 +259,7 @@ resolve_credentials(app_id=None, app_key=None) -> Credentials
   断言「子命令名 ↔ Node 叶子名（含登记别名）」与「Python 选项 ⊆ Node 描述符选项」。
 - 本地前置校验：D11 的 `--type` 白名单（`_prepare_judicial`）、`graph` 的
   `--down/--up` 把 `False` 归一为 `None`（`_prepare_graph`）——都在 `CLI_SPEC` 的 `prepare` 里声明。
-- `_emit(result, output)`：`{"ok": true, "data": result}`（ensure_ascii=False, indent=2）；给了 `--output` 则写文件并打印「已写入 <path>」。
+- `_emit(result, output)`：`{"ok": true, "data": result}`（ensure_ascii=False, indent=2）；给了 `--output` 则写文件并打印「已写入 [path]」。
 - `_handle_error(e)` → `_err_exit(exit_code, category, code, msg)`：
 
 | 异常 | category | 退出码 | retryable |

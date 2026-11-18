@@ -48,7 +48,7 @@
 安全纪律：
 - 不得把 Key 复述给用户、写入命令参数、日志、代码、公开配置或 Git 提交。
 - 用户主动提供时接受，不复述。
-- 获取地址：<https://api.elecredit.com/admin>
+- 获取地址：[https://api.elecredit.com/admin]
 
 ## 签名（生产环境已验证）
 

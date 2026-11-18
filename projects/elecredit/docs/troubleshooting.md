@@ -9,7 +9,7 @@
 ### 一直返回 `SYS005 余额不足`
 
 **因为你的接入是对的。** `SYS005` 意味着签名已通过校验、凭据有效、网关可达，
-只是账户余额不足。去 <https://api.elecredit.com/admin> 充值后即可拿到真实数据。
+只是账户余额不足。去 [https://api.elecredit.com/admin] 充值后即可拿到真实数据。
 不要把它当认证失败去改签名——这是上手最常见的无效排错。
 
 ### 我有 API Key，能用吗
@@ -70,10 +70,10 @@ Node CLI 的系统钥匙环在无 Secret Service 的 Linux 容器中不可用，
 
 ### `resultData` 里面为什么还有一层 `P0010068Data`
 
-上游会把业务体再包一层：`resultData = { "<产品码>Status", "<产品码>Data" }`，
+上游会把业务体再包一层：`resultData = { "[产品码]Status", "[产品码]Data" }`，
 **产品码每个端点都不同**。Python SDK 用 `product_payload()` 自动探测
 （匹配 `^P\d+Data$`，上游换码也不会失效），未命中返回 `{}` 不抛异常；
-其它语言按 `resultData["<产品码>Data"]` 取，对照表见
+其它语言按 `resultData["[产品码]Data"]` 取，对照表见
 [REST API 契约总览](api/elecredit/README.md#resultdata-包裹结构产品码)。
 
 ### 图谱（F09）请求很久没返回，是失败了吗

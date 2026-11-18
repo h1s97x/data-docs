@@ -121,7 +121,7 @@ import { createClientFromEnv, query } from '@h1s97x/elecredit';
 
 ## 凭据配置
 
-从 <https://api.elecredit.com/admin> 获取 App ID + App Key，两种配置方式：
+从 [https://api.elecredit.com/admin] 获取 App ID + App Key，两种配置方式：
 
 ```bash
 # 方式 1：环境变量（推荐，支持 CI / 容器）

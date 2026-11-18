@@ -39,7 +39,7 @@ CNB 制品库与公网源。CNB 两通道用平台内置 `${CNB_TOKEN}`；公网
   均为 `@h1s97x/elecredit 0.1.2`（0.1.2 是升级 zod 修复高危漏洞的补丁），
   CNB PyPI 与 pypi.org 均为 `elecredit 0.1.1`（Python SDK 无改动，未发补丁）。
 - ⚠️ **历史 tag 已清理（2026-11-03）**：`cli-v0.0.1`~`cli-v0.1.0`、`sdk-v0.0.1`~`sdk-v0.1.0`
-  共 11 个已从本地与远端删除，tag 名已释放、可重新使用。恢复用 `git tag <name> <sha>`：
+  共 11 个已从本地与远端删除，tag 名已释放、可重新使用。恢复用 `git tag [name] <sha>`：
   `cli-v0.0.1 6dc1d90` / `cli-v0.0.2 f8d42b6` / `cli-v0.0.3 1bf6815` / `cli-v0.0.4 f00fc77` /
   `cli-v0.1.0 19908e6` / `sdk-v0.0.1 5d6d87f` / `sdk-v0.0.2 d50ed42` / `sdk-v0.0.3 70cd45b` /
   `sdk-v0.0.4 f00fc77` / `sdk-v0.0.5 ef06dfc` / `sdk-v0.1.0 1d9ba2d`。
@@ -71,7 +71,7 @@ npm test --ignore-scripts
 
 # 3. 提交并推送
 git add -A && git commit -m "chore(release): v0.1.1"
-git push origin <分支>
+git push origin [分支]
 
 # 4. tag 必须是 cli-v<package.json version>（cli-v0.1.1 ↔ 0.1.1），推 tag 即触发发布
 git tag cli-v0.1.1 && git push origin cli-v0.1.1
@@ -111,9 +111,9 @@ git tag cli-v0.1.1 && git push origin cli-v0.1.1
 
 | 尝试 | 结果 |
 |------|------|
-| `npm deprecate @h1s97x/elecredit@"<=0.0.2" "<msg>"` | `400 Cannot release multiple versions simultaneously` |
-| `npm deprecate @h1s97x/elecredit@0.0.2 "<msg>"`（逐版本） | 同上 `400`（平台对 packument PUT 的限制：一次只能发布/改动一个版本） |
-| `cnb registries update-package-description --description "<msg>"` | `500 Internal Server Error`（换纯文本重试亦然） |
+| `npm deprecate @h1s97x/elecredit@"<=0.0.2" "[msg]"` | `400 Cannot release multiple versions simultaneously` |
+| `npm deprecate @h1s97x/elecredit@0.0.2 "[msg]"`（逐版本） | 同上 `400`（平台对 packument PUT 的限制：一次只能发布/改动一个版本） |
+| `cnb registries update-package-description --description "[msg]"` | `500 Internal Server Error`（换纯文本重试亦然） |
 
 `cnb registries` 的 10 个工具里也确实没有 deprecate（只有删除制品/标签、查列表、改描述）。
 
@@ -322,7 +322,7 @@ PyPI 库与已有的 npm 库（如 `h1s97x/npm`）互不冲突。
 
 ```bash
 cd sdks/python
-# 改 sdks/python/pyproject.toml 的 version，再打 sdk-v<version> tag
+# 改 sdks/python/pyproject.toml 的 version，再打 sdk-v[version] tag
 git tag sdk-v0.0.5 && git push origin sdk-v0.0.5   # 推 tag 即触发 CNB 的 publish-pypi-on-tag
 ```
 
@@ -344,7 +344,7 @@ git tag sdk-v0.0.5 && git push origin sdk-v0.0.5   # 推 tag 即触发 CNB 的 p
 ### 消费方安装
 
 ```bash
-pip config set global.index-url https://cnb:<你的CNB访问令牌>@pypi.cnb.cool/h1s97x/pypi/-/packages/simple
+pip config set global.index-url https://cnb:[你的CNB访问令牌]@pypi.cnb.cool/h1s97x/pypi/-/packages/simple
 pip install elecredit
 ```
 

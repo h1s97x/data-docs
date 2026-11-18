@@ -125,7 +125,7 @@ DUEAGENT_NETWORK=workspace_default \
   "mcpServers": {
     "elecredit": {
       "url": "https://mcp.internal.example/mcp",
-      "headers": { "Authorization": "Bearer <MCP_AUTH_TOKEN>" }
+      "headers": { "Authorization": "Bearer [MCP_AUTH_TOKEN]" }
     }
   }
 }
