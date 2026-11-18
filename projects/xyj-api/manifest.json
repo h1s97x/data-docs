@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source": "xyj-api@ff32bc1",
+  "source": "xyj-api@8be3fd9",
   "generatedBy": "tools/export_docs.py",
   "contractVersion": 1,
   "generatorSha256": "cb504a7ad95718ad3cbbddd3be0f575d42b815dad8c77872274fbbb34cc18fd8",
@@ -13,8 +13,8 @@
   "files": [
     {
       "path": "README.md",
-      "sha256": "ee279420f9517937d464d5fa902de756283cc6a3bb22f22ebb00e05231be064b",
-      "bytes": 5729
+      "sha256": "e9f112d105c0e2206ae67f0c39020aaf0022c6fd14cf5bd1345aff3dea66d87a",
+      "bytes": 5857
     },
     {
       "path": "docs/architecture.md",

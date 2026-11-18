@@ -82,6 +82,7 @@ curl -X POST http://127.0.0.1:8804/v1/query/upstream \
 
 | 目标 | 文档 |
 |---|---|
+| 在线文档站 | [Data Docs](https://h1s97x.github.io/data-docs/)（三项目统一站；各主仓 `docs/` 为事实源） |
 | 协议契约（签名 / 信封 / 端点 / 错误语义） | [`docs/protocol.md`](docs/protocol.md) |
 | 调用方接入指南 | [`docs/INTEGRATION.md`](docs/INTEGRATION.md) |
 | 架构：契约驱动 + 代码生成 | [`docs/architecture.md`](docs/architecture.md) |
